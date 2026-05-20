@@ -1,0 +1,19 @@
+# Core
+langgraph>=0.2.0,<0.3.0
+langchain-core>=0.3.0
+langchain-openai>=0.2.0
+langchain>=0.3.0
+
+# Persistence
+langgraph-checkpoint-sqlite>=2.0.0
+# 生产 PostgreSQL 持久化（如不用可注释）
+langgraph-checkpoint-postgres>=2.0.0
+psycopg[binary]>=3.1.0
+
+# Schema / Settings
+pydantic>=2.7.0
+python-dotenv>=1.0.0
+
+# Tests
+pytest>=8.0.0
+pytest-asyncio>=0.23.0
