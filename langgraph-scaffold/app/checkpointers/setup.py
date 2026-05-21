@@ -30,6 +30,7 @@ def get_checkpointer() -> Iterator[object]:
     if kind == "memory":
         from langgraph.checkpoint.memory import MemorySaver
 
+        # MemorySaver 只存在于当前进程，适合开发和单元测试。
         yield MemorySaver()
         return
 
@@ -40,6 +41,7 @@ def get_checkpointer() -> Iterator[object]:
             raise RuntimeError(
                 "未安装 langgraph-checkpoint-sqlite，请执行：pip install langgraph-checkpoint-sqlite"
             ) from e
+        # SQLite 会把 checkpoint 写到本地文件，适合本机 demo 或轻量测试。
         with SqliteSaver.from_conn_string(settings.sqlite_path) as cp:
             yield cp
         return
@@ -53,6 +55,7 @@ def get_checkpointer() -> Iterator[object]:
             ) from e
         if not settings.postgres_dsn:
             raise RuntimeError("CHECKPOINTER=postgres 但未配置 POSTGRES_DSN 环境变量")
+        # PostgresSaver 适合服务化部署，多个进程/实例可以共享会话状态。
         with PostgresSaver.from_conn_string(settings.postgres_dsn) as cp:
             cp.setup()  # 首次运行自动建表
             yield cp

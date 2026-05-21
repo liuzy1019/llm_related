@@ -28,6 +28,14 @@ htmlcov/
 .env
 .env.local
 .env.*.local
+*.secret
+*.secrets
+*.token
+*_token*
+*_secret*
+*_git.md
+credentials/
+secrets/
 *.sqlite
 *.sqlite3
 .checkpoints.sqlite

@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>食堂外卖智能客服系统开发方案</title>
+          <style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  @page { size: A4; margin: 8mm 12mm; }
+  body {
+    font-family: 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #fff;
+    color: #333;
+    line-height: 1.45;
+    font-size: 8.5pt;
+  }
+  h1 {
+    font-size: 14pt;
+    font-weight: 700;
+    padding-bottom: 4px;
+    border-bottom: 2px solid #5b9a5b;
+    margin: 0 0 8px 0;
+    color: #2a5a2a;
+  }
+  h2 {
+    font-size: 10pt;
+    font-weight: 700;
+    margin: 10px 0 4px;
+    padding-left: 6px;
+    border-left: 3px solid #5b9a5b;
+    color: #2a5a2a;
+  }
+  h3 {
+    font-size: 9pt;
+    font-weight: 600;
+    margin: 7px 0 3px;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 1px;
+  }
+  h4 {
+    font-size: 8.5pt;
+    font-weight: 600;
+    margin: 5px 0 2px;
+    color: #555;
+  }
+  p { margin: 2px 0; line-height: 1.4; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 5px 0; }
+  ul, ol { margin: 2px 0 3px 16px; }
+  li { margin: 1px 0; line-height: 1.35; }
+  blockquote {
+    margin: 3px 0 3px 10px;
+    padding: 3px 6px;
+    background-color: #f0f7f0;
+    border-left: 2px solid #5b9a5b;
+    color: #555;
+    font-size: 8pt;
+  }
+  code {
+    font-family: 'SF Mono', Consolas, monospace;
+    font-size: 6.5pt;
+    background-color: #f3f3f3;
+    padding: 0 2px;
+    color: #7b2f7b;
+  }
+  pre {
+    background-color: #f6f6f6;
+    border: 1px solid #d0d0d0;
+    border-left: 3px solid #5b9a5b;
+    padding: 4px 8px;
+    margin: 3px 0 5px;
+    font-size: 6.5pt;
+    line-height: 1.3;
+    white-space: pre-wrap;
+    word-break: break-all;
+    overflow-x: visible;
+    border-radius: 2px;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 6.5pt;
+    word-break: break-all;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 4px 0 6px;
+    font-size: 7.5pt;
+    border: 1px solid #c0c0c0;
+  }
+  th {
+    background: #edf7ed;
+    border: 1px solid #b0d0b0;
+    padding: 3px 5px;
+    font-weight: 700;
+    color: #2a5a2a;
+    font-size: 7.5pt;
+  }
+  td {
+    border: 1px solid #d8d8d8;
+    padding: 2px 5px;
+    vertical-align: top;
+    font-size: 7.5pt;
+    line-height: 1.3;
+  }
+  tbody tr:nth-child(even) td { background-color: #f9fdf9; }
+  #title-block-header { display: none; }
+  .doc-meta { margin: 0 0 6px; padding: 0 0 5px; border-bottom: 1px dashed #ccc; font-size: 8pt; color: #777; line-height: 1.5; }
+  .doc-meta strong { color: #5b9a5b; }
+  .tag { display: inline-block; padding: 0 4px; font-size: 6.5pt; font-weight: 600; }
+  h2:nth-child(4n+1) { border-left-color: #5b9a5b; color: #2a5a2a; }
+  h2:nth-child(4n+2) { border-left-color: #4a7fb5; color: #2a4a7a; }
+  h2:nth-child(4n+3) { border-left-color: #7b5aaa; color: #4a2a7a; }
+  @media print {
+    pre { white-space: pre-wrap; word-break: break-all; }
+    body { font-size: 8pt; }
+  }
+</style>
+  <link rel="stylesheet" href="" />
+</head>
+<body>
+
+<div class="doc-meta"><strong>版本：</strong> v1.0 &nbsp;&nbsp;|&nbsp;&nbsp; <strong>日期：</strong> 2026-03-25 &nbsp;&nbsp;|&nbsp;&nbsp; <strong>状态：</strong> 初稿</div>
+<hr />
+<h2 id="一项目概述与背景">一、项目概述与背景</h2>
+<h3 id="业务场景">1.1 业务场景</h3>
+<p>食堂外卖智能客服系统服务于外卖平台的终端用户，核心场景包括：</p>
+<ul>
+<li><strong>售前咨询</strong>：菜品口味、价格、商家信息、优惠活动</li>
+<li><strong>订单查询</strong>：配送状态、订单详情、历史订单</li>
+<li><strong>售后处理</strong>：取消订单、退款申请、投诉建议</li>
+<li><strong>问题解决</strong>：错发漏发、食品质量、转人工升级</li>
+</ul>
+<h3 id="当前系统定位">1.2 当前系统定位</h3>
+<p>本方案基于<strong>浣熊食堂智能客服系统</strong>现有架构进行诊断与演进设计。现有系统已具备：</p>
+<ul>
+<li>13 步串行 Pipeline 编排</li>
+<li>20+ 意图识别（两级：向量相似度 + LLM CoT 推理）</li>
+<li>8 个业务函数（查询 3 + 操作 5）</li>
+<li>ChromaDB 三层记忆架构（短期/工作/长期）</li>
+<li>Agent Loop 多步自主执行（可选开启）</li>
+<li>意图路由 RAG（products / faq / policies 三集合）</li>
+<li>声明式 JSON 配置（intents.json / functions.json / sop.json）</li>
+</ul>
+<h3 id="核心痛点">1.3 核心痛点</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>问题</th>
+<th>影响</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>13 步串行 Pipeline，意图识别与槽位提取互不依赖却串行执行</td>
+<td>P50 延迟 2-5s</td>
+</tr>
+<tr>
+<td>Step 0-5 全链路串行，Router 决策后才能进入知识/函数执行</td>
+<td>高并发下延迟恶化明显</td>
+</tr>
+<tr>
+<td>Agent Loop 仅在 Step 8.5/9 内循环，能力单一</td>
+<td>复杂多步场景效果受限</td>
+</tr>
+<tr>
+<td>单一 LLM 调用链路长</td>
+<td>Token 成本高，难以独立优化各环节</td>
+</tr>
+<tr>
+<td>转人工判断依赖规则（5 条件）</td>
+<td>灵活性和召回率受限</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="二主流范式深度对比">二、主流范式深度对比</h2>
+<h3 id="范式一览">2.1 范式一览</h3>
+<table>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 13%" />
+<col style="width: 17%" />
+<col style="width: 17%" />
+</colgroup>
+<thead>
+<tr>
+<th>范式</th>
+<th>核心思路</th>
+<th>P50 延迟</th>
+<th>成本</th>
+<th>完成率</th>
+<th>复杂度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>串行 Pipeline</td>
+<td>13 步线性执行，单一 LLM</td>
+<td>2-5s</td>
+<td>中</td>
+<td>60-75%</td>
+<td>低</td>
+</tr>
+<tr>
+<td>Multi-Agent 消息总线</td>
+<td>各 Agent 异步通信，共享消息队列</td>
+<td>3-8s</td>
+<td>高</td>
+<td>75-90%</td>
+<td>高</td>
+</tr>
+<tr>
+<td>Hierarchical Coordinator</td>
+<td>Router 分类 → 分发给专业 Agent</td>
+<td>2-5s</td>
+<td>中高</td>
+<td>70-85%</td>
+<td>中高</td>
+</tr>
+<tr>
+<td>LLM-as-Judge 路由</td>
+<td>按复杂度动态分流到不同处理链路</td>
+<td>+0.3s</td>
+<td>低</td>
+<td>+5-15%</td>
+<td>中</td>
+</tr>
+<tr>
+<td><strong>Hybrid Coordinator（推荐）</strong></td>
+<td>Router-first + 动态路由 + 共享记忆</td>
+<td>1.5-4s</td>
+<td>中</td>
+<td><strong>80-92%</strong></td>
+<td>中高</td>
+</tr>
+</tbody>
+</table>
+<h3 id="各范式详细对比">2.2 各范式详细对比</h3>
+<h4 id="范式-a串行-pipeline当前浣熊系统">范式 A：串行
+Pipeline（当前浣熊系统）</h4>
+<pre><code>用户消息 → Step0 → Step0.5 → Step1 → Step1.5 → Step2 → Step3 → Step4 → Step5 → Step6 → Step6.5 → Step7 → Step8 → Step8.5 → Step9 → Step10 → 返回用户</code></pre>
+<ul>
+<li><strong>优点</strong>：流程清晰、便于监控、排查问题容易、新增意图只需改
+JSON 配置</li>
+<li><strong>缺点</strong>：无法并行（意图识别和槽位提取互不依赖）、单一
+LLM 链路耦合重、无法独立优化各环节</li>
+<li><strong>适用</strong>：意图收敛（&lt;50
+种）、单轮或多轮简单流转、团队初期快速验证</li>
+</ul>
+<h4 id="范式-bmulti-agent-消息总线">范式 B：Multi-Agent 消息总线</h4>
+<pre><code>消息队列（Redis/RabbitMQ）
+  ├── Intent Agent ──→ 意图分类结果
+  ├── Slot Agent  ──→ 槽位提取结果
+  ├── RAG Agent   ──→ 知识检索结果
+  ├── Action Agent ──→ 函数执行结果
+  └── Memory Agent ──→ 记忆更新结果
+                    ↓
+              Generator Agent
+                    ↓
+                 返回用户</code></pre>
+<ul>
+<li><strong>优点</strong>：容错好（一个 Agent
+挂了其他继续）、可独立扩缩容、并行执行理论上能到 1-2s</li>
+<li><strong>缺点</strong>：消息顺序保障复杂、Agent
+间状态同步困难、调试成本极高、需要成熟中间件团队</li>
+<li><strong>适用</strong>：高并发、复杂业务、有中间件运维能力</li>
+</ul>
+<h4 id="范式-chierarchical-coordinator">范式 C：Hierarchical
+Coordinator</h4>
+<pre><code>Router Agent（接管原 Step 0-5）
+  ├── 意图分类（快）
+  ├── 阶段判断
+  ├── 情感检测
+  └── 转人工判断
+        │
+        ├── KNOWLEDGE → 知识检索 Agent → Generator
+        ├── ACTION    → 函数执行 Agent → Generator
+        └── HYBRID    → 知识 + 函数并行 → Generator</code></pre>
+<ul>
+<li><strong>优点</strong>：清晰分层结构、便于监控每个
+Agent、逐个优化、独立扩展</li>
+<li><strong>缺点</strong>：Router 是核心瓶颈、必须保证高准确率</li>
+<li><strong>适用</strong>：生产环境首选</li>
+</ul>
+<h4 id="范式-dllm-as-judge-动态路由">范式 D：LLM-as-Judge 动态路由</h4>
+<pre><code>用户消息
+    │
+    ▼
+Router LLM（轻量，&lt;100 tokens）
+    │
+    ├── 简单   → 知识库直接检索 → 返回（&lt;500ms）
+    ├── 中等   → 意图识别 → 槽位 → 返回（1-2s）
+    └── 复杂   → 走完整 Pipeline / Multi-Agent（3-5s）</code></pre>
+<ul>
+<li><strong>优点</strong>：成本效率极高（节省 40-60%
+Token）、用户体验分层</li>
+<li><strong>缺点</strong>：Router 分类准确率是整个系统的瓶颈（5-15%
+误分类率）</li>
+<li><strong>适用</strong>：成本敏感、有明确”简单/复杂”区分度的场景</li>
+</ul>
+<h4 id="范式-ehybrid-coordinator推荐落地方案">范式 E：Hybrid
+Coordinator（推荐落地方案）</h4>
+<p>整合以上范式优点，按场景自适应：</p>
+<pre><code>用户消息
+    │
+    ▼
+┌─────────────────────────────┐
+│  Router Agent（~300ms）      │  ← 接管原 Step 0-5，合并为一次 LLM 调用
+│  意图识别 + 阶段判断 +      │
+│  情感检测 + 转人工判断       │
+└──────────┬────────────────┘
+           │
+   ┌───────┼───────┬──────────┐
+   ▼       ▼       ▼          ▼
+KNOWLEDGE  ACTION  HYBRID   CHITCHAT
+ (~500ms) (~1-2s) (~2-3s)  直接回复
+   │       │       │          │
+   └───────┼───────┘
+           ▼
+    Generator Agent + Memory Agent（共享三层记忆）
+           │
+           ▼
+        返回用户</code></pre>
+<p><strong>核心优势</strong>： 1. <strong>并行执行</strong> — KNOWLEDGE
+/ ACTION / HYBRID 可并行检索知识+执行函数 2. <strong>职责单一</strong> —
+每个 Agent 只专注一件事，LLM 调用更精准 3. <strong>独立扩展</strong> —
+哪个环节慢就单独优化，不影响全链路 4. <strong>统一记忆</strong> — Memory
+Agent 作为共享记忆中枢，避免各 Agent 上下文割裂 5.
+<strong>容错隔离</strong> — 某个 Agent 失败不影响其他，Pipeline
+改为消息总线兜底</p>
+<h3 id="综合对比矩阵">2.3 综合对比矩阵</h3>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 17%" />
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 15%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th>维度</th>
+<th style="text-align: center;">串行 Pipeline</th>
+<th style="text-align: center;">Multi-Agent 消息总线</th>
+<th style="text-align: center;">Hierarchical Coordinator</th>
+<th style="text-align: center;">LLM-as-Judge 路由</th>
+<th style="text-align: center;"><strong>Hybrid Coordinator</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P50 延迟</td>
+<td style="text-align: center;">2-5s</td>
+<td style="text-align: center;">3-8s</td>
+<td style="text-align: center;">2-5s</td>
+<td style="text-align: center;">+0.3s</td>
+<td style="text-align: center;"><strong>1.5-4s</strong></td>
+</tr>
+<tr>
+<td>P99 延迟</td>
+<td style="text-align: center;">5-15s</td>
+<td style="text-align: center;">10-30s</td>
+<td style="text-align: center;">8-20s</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;"><strong>6-18s</strong></td>
+</tr>
+<tr>
+<td>任务完成率</td>
+<td style="text-align: center;">60-75%</td>
+<td style="text-align: center;">75-90%</td>
+<td style="text-align: center;">70-85%</td>
+<td style="text-align: center;">+5-15%</td>
+<td style="text-align: center;"><strong>80-92%</strong></td>
+</tr>
+<tr>
+<td>Token 成本</td>
+<td style="text-align: center;">中</td>
+<td style="text-align: center;">高</td>
+<td style="text-align: center;">中高</td>
+<td style="text-align: center;">低</td>
+<td style="text-align: center;"><strong>中</strong></td>
+</tr>
+<tr>
+<td>Scalability</td>
+<td style="text-align: center;">低</td>
+<td style="text-align: center;">高</td>
+<td style="text-align: center;">中</td>
+<td style="text-align: center;">高</td>
+<td style="text-align: center;"><strong>高</strong></td>
+</tr>
+<tr>
+<td>可观测性</td>
+<td style="text-align: center;">简单</td>
+<td style="text-align: center;">困难</td>
+<td style="text-align: center;">中等</td>
+<td style="text-align: center;">中等</td>
+<td style="text-align: center;"><strong>复杂</strong></td>
+</tr>
+<tr>
+<td>实现复杂度</td>
+<td style="text-align: center;">低</td>
+<td style="text-align: center;">高</td>
+<td style="text-align: center;">中高</td>
+<td style="text-align: center;">中</td>
+<td style="text-align: center;"><strong>中高</strong></td>
+</tr>
+<tr>
+<td>上线周期</td>
+<td style="text-align: center;">0（已有）</td>
+<td style="text-align: center;">12-24 周</td>
+<td style="text-align: center;">4-8 周</td>
+<td style="text-align: center;">2-4 周</td>
+<td style="text-align: center;"><strong>8-16 周</strong></td>
+</tr>
+<tr>
+<td>适用规模</td>
+<td style="text-align: center;">&lt;50 意图</td>
+<td style="text-align: center;">200+ 意图</td>
+<td style="text-align: center;">50-200 意图</td>
+<td style="text-align: center;">任意</td>
+<td style="text-align: center;"><strong>任意</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="三推荐架构方案">三、推荐架构方案</h2>
+<h3 id="架构设计">3.1 架构设计</h3>
+<pre><code>┌──────────────────────────────────────────────────────────┐
+│                       用户入口                          │
+│              外卖 App / Web / API                       │
+└──────────────────────────┬───────────────────────────────┘
+                           │
+                           ▼
+┌──────────────────────────────────────────────────────────┐
+│              🤖 Router Agent（~300ms）                   │
+│                                                          │
+│  ┌─────────┐  ┌──────────┐  ┌──────────┐  ┌────────┐ │
+│  │记忆召回 │  │意图识别  │  │阶段判断  │  │情感检测│ │
+│  │Step0   │  │Step1+5  │  │Step2    │  │Step3   │ │
+│  └─────────┘  └──────────┘  └──────────┘  └────────┘ │
+│                                                          │
+│  合并为一次 LLM 调用，并行输出多维信号                    │
+│  + Step4 转人工判断                                     │
+└──────────────────────────┬───────────────────────────────┘
+                           │
+            ┌───────────────┼───────────────┐
+            ▼               ▼               ▼
+         KNOWLEDGE       ACTION          HYBRID
+            │               │               │
+            ▼               ▼               ▼
+      ┌──────────┐   ┌──────────┐   ┌──────────┐
+      │槽位提取  │   │槽位提取  │   │槽位提取  │
+      │+ RAG检索 │   │+ 函数执行 │   │+ RAG+函数│
+      │Step6+8   │   │Step6+8.5 │   │全部并行  │
+      └────┬─────┘   └────┬─────┘   └────┬─────┘
+            └───────────────┼───────────────┘
+                            ▼
+              ┌────────────────────────┐
+              │  📝 Generator Agent   │
+              │  Step9 + Step10      │
+              │  回复生成 + 事实提取 │
+              └──────────┬───────────┘
+                         │
+              ┌──────────┴───────────┐
+              ▼                      ▼
+      ┌─────────────┐         ┌─────────────┐
+      │Memory Agent│         │ 返回用户    │
+      │三层记忆中枢│         │ ChatResponse│
+      │Step0+10   │         └─────────────┘
+      └─────────────┘</code></pre>
+<h3 id="agent-职责定义">3.2 Agent 职责定义</h3>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 34%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>Agent</th>
+<th>接管原 Pipeline</th>
+<th>输入</th>
+<th>输出</th>
+<th>核心能力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Router Agent</strong></td>
+<td>Step 0-5</td>
+<td>用户消息 + session_id</td>
+<td>意图 + 槽位 + 阶段 + 情感 + 路由决策</td>
+<td>一次 LLM 调用并行输出多维信号</td>
+</tr>
+<tr>
+<td><strong>Knowledge Agent</strong></td>
+<td>Step 6 + 8</td>
+<td>意图 + 槽位</td>
+<td>RAG 检索结果（top-3）</td>
+<td>意图路由选择集合（products/faq/policies）</td>
+</tr>
+<tr>
+<td><strong>Action Agent</strong></td>
+<td>Step 6 + 8.5</td>
+<td>意图 + 槽位</td>
+<td>函数执行结果</td>
+<td>8 业务函数 + Agent Loop 多步执行</td>
+</tr>
+<tr>
+<td><strong>Hybrid Agent</strong></td>
+<td>Step 6 + 8 + 8.5</td>
+<td>意图 + 槽位</td>
+<td>知识片段 + 函数结果</td>
+<td>知识检索与函数执行并行协作</td>
+</tr>
+<tr>
+<td><strong>Generator Agent</strong></td>
+<td>Step 9 + 10</td>
+<td>所有上游结果</td>
+<td>最终回复</td>
+<td>SOP 指令 + 记忆上下文 + RAG + 函数 → LLM 生成</td>
+</tr>
+<tr>
+<td><strong>Memory Agent</strong></td>
+<td>Step 0 + 10</td>
+<td>session_id + 关键事实</td>
+<td>记忆召回 / 压缩 / 持久化</td>
+<td>三层记忆（短期/工作/长期）+ ChromaDB</td>
+</tr>
+</tbody>
+</table>
+<h3 id="路由决策逻辑">3.3 路由决策逻辑</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> RouterDecision:</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> decide(<span class="va">self</span>, intent, stage, emotion, slots, confidence) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 1. 转人工优先</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>._should_escalate(emotion, confidence, stage):</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">&quot;ESCALATE&quot;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 2. 闲聊直接回复</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> intent <span class="kw">in</span> [<span class="st">&quot;chitchat&quot;</span>, <span class="st">&quot;greeting&quot;</span>, <span class="st">&quot;goodbye&quot;</span>]:</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">&quot;CHITCHAT&quot;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 3. 知识查询为主</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> intent <span class="kw">in</span> [<span class="st">&quot;product_inquiry&quot;</span>, <span class="st">&quot;price_inquiry&quot;</span>, <span class="st">&quot;faq&quot;</span>, <span class="st">&quot;policy_inquiry&quot;</span>]:</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="bu">len</span>(slots) <span class="op">&lt;</span> <span class="dv">2</span>:</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="st">&quot;KNOWLEDGE&quot;</span>  <span class="co"># 简单知识查询</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="st">&quot;HYBRID&quot;</span>     <span class="co"># 知识 + 少量槽位</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 4. 操作/执行类</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> intent <span class="kw">in</span> [<span class="st">&quot;order_cancel&quot;</span>, <span class="st">&quot;refund_request&quot;</span>, <span class="st">&quot;modify_order&quot;</span>, <span class="st">&quot;complaint&quot;</span>]:</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">&quot;HYBRID&quot;</span>  <span class="co"># 需要函数执行，但可能也需要知识支撑</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 5. 纯操作</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> intent <span class="kw">in</span> [<span class="st">&quot;delivery_inquiry&quot;</span>, <span class="st">&quot;rush_order&quot;</span>]:</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="bu">len</span>(slots) <span class="op">&gt;=</span> <span class="dv">1</span>:</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="st">&quot;ACTION&quot;</span>   <span class="co"># 槽位足够，直接执行</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="st">&quot;HYBRID&quot;</span>   <span class="co"># 槽位不足，需要追问</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 6. 默认</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;HYBRID&quot;</span></span></code></pre></div>
+<h3 id="agent-间通信协议">3.4 Agent 间通信协议</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="at">@dataclass</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> AgentMessage:</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    sender: <span class="bu">str</span>           <span class="co"># &quot;router&quot; / &quot;knowledge&quot; / &quot;action&quot; / &quot;memory&quot;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    intent: <span class="bu">str</span>           <span class="co"># 意图分类结果</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    slots: Dict[<span class="bu">str</span>, <span class="bu">str</span>] <span class="co"># 共享槽位数据</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    context: Dict         <span class="co"># 共享上下文（含历史摘要）</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    memory_snapshot: Dict <span class="co"># 三层记忆快照</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    rag_results: List     <span class="co"># RAG 检索结果（Knowledge Agent 填充）</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    function_results: Dict <span class="co"># 函数执行结果（Action Agent 填充）</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    generated_reply: <span class="bu">str</span>  <span class="co"># 最终回复（Generator Agent 填充）</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    latency_ms: <span class="bu">float</span>    <span class="co"># 各 Agent 执行耗时</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    tokens: <span class="bu">int</span>          <span class="co"># Token 消耗</span></span></code></pre></div>
+<h3 id="与现有浣熊系统的映射关系">3.5 与现有浣熊系统的映射关系</h3>
+<table>
+<colgroup>
+<col style="width: 32%" />
+<col style="width: 35%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr>
+<th>现有组件</th>
+<th>演进后归属</th>
+<th>变化说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Step 0 记忆回忆</td>
+<td>Router Agent + Memory Agent</td>
+<td>Router 并行调用记忆召回</td>
+</tr>
+<tr>
+<td>Step 0.5 文本纠正</td>
+<td>Router Agent</td>
+<td>合并到 Router 一次 LLM 调用中</td>
+</tr>
+<tr>
+<td>Step 1 意图识别</td>
+<td>Router Agent</td>
+<td>合并，输出多维信号</td>
+</tr>
+<tr>
+<td>Step 1.5 话题切换</td>
+<td>Router Agent</td>
+<td>合并</td>
+</tr>
+<tr>
+<td>Step 2 阶段判断</td>
+<td>Router Agent</td>
+<td>合并</td>
+</tr>
+<tr>
+<td>Step 3 情感检测</td>
+<td>Router Agent</td>
+<td>合并</td>
+</tr>
+<tr>
+<td>Step 4 转人工检查</td>
+<td>Router Agent</td>
+<td>合并，规则升级为 LLM 判断</td>
+</tr>
+<tr>
+<td>Step 5 路由决策</td>
+<td>升级为核心分发逻辑</td>
+<td>细分为 KNOWLEDGE / ACTION / HYBRID</td>
+</tr>
+<tr>
+<td>Step 6 槽位提取</td>
+<td>各下游 Agent</td>
+<td>按路由分发到对应 Agent</td>
+</tr>
+<tr>
+<td>Step 8 RAG 检索</td>
+<td>Knowledge Agent</td>
+<td>独立 Agent，并行执行</td>
+</tr>
+<tr>
+<td>Step 8.5 函数执行</td>
+<td>Action Agent</td>
+<td>独立 Agent，支持 Agent Loop</td>
+</tr>
+<tr>
+<td>Step 9 回复生成</td>
+<td>Generator Agent</td>
+<td>独立 Agent</td>
+</tr>
+<tr>
+<td>Step 10 事实提取</td>
+<td>Memory Agent</td>
+<td>合并到 Memory Agent</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="四演进路线图">四、演进路线图</h2>
+<h3 id="phase-1router-first-改造2-4-周">Phase 1：Router-first 改造（2-4
+周）</h3>
+<p><strong>目标</strong>：最小改动，提升 Router 决策效率</p>
+<p><strong>改动</strong>： - 将 Step 0-5 合并为 Router Agent，一次 LLM
+调用并行输出意图 + 阶段 + 情感 + 转人工 - Step 6-10 保持不变</p>
+<p><strong>预期效果</strong>： - P50 延迟：2.5s →
+<strong>1.8s</strong>（节省 ~700ms） - 意图准确率：+3-6%（Router 一次
+LLM 调用，减少信息损失） - Token 消耗：减少约 20%（减少了串行 LLM
+调用次数）</p>
+<h3 id="phase-2动态路由4-8-周">Phase 2：动态路由（4-8 周）</h3>
+<p><strong>目标</strong>：按路由并行执行 KNOWLEDGE / ACTION</p>
+<p><strong>改动</strong>： - Router 输出路由决策（KNOWLEDGE / ACTION /
+HYBRID / CHITCHAT） - 按路由分发到对应 Agent，并行执行 - Generator Agent
+汇总结果</p>
+<p><strong>预期效果</strong>： - P50 延迟：1.8s →
+<strong>1.2s</strong>（知识检索 + 函数执行并行） - 任务完成率：68% →
+<strong>75-78%</strong>（路由分流，更精准的处理链路） -
+转人工召回率：70% → <strong>80-85%</strong>（Router LLM 判断 &gt;
+规则判断）</p>
+<h3 id="phase-3hybrid-agent-memory-共享8-16-周">Phase 3：Hybrid Agent +
+Memory 共享（8-16 周）</h3>
+<p><strong>目标</strong>：完整 Multi-Agent 协作</p>
+<p><strong>改动</strong>： - Hybrid Agent：知识检索与函数执行并行协作 -
+Memory Agent：统一管理三层记忆，作为共享中枢 - Agent Loop 升级：在各
+Agent 内支持多步自主执行 - 可观测性：OpenTelemetry 全链路追踪</p>
+<p><strong>预期效果</strong>： - 任务完成率：75-78% →
+<strong>80-85%</strong> - P99 延迟：改善（容错隔离，单 Agent
+失败不影响整体） - 可独立优化各 Agent，不影响全链路</p>
+<h3 id="phase-4持续优化长期">Phase 4：持续优化（长期）</h3>
+<ul>
+<li>Benchmark 持续评测，定位瓶颈</li>
+<li>按评测结果优化各 Agent Prompt</li>
+<li>引入 Human-in-the-loop 反馈闭环</li>
+<li>长尾意图专项优化</li>
+</ul>
+<hr />
+<h2 id="五benchmark-评测方案">五、Benchmark 评测方案</h2>
+<h3 id="测试用例设计50-条覆盖-4-个难度级别">5.1 测试用例设计（50
+条，覆盖 4 个难度级别）</h3>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>级别</th>
+<th>数量</th>
+<th>特征</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Level 1（简单）</td>
+<td>15 条</td>
+<td>FAQ 类，不需 LLM 或 1 次调用</td>
+<td>“你们几点营业？”、“退款多久到账？”</td>
+</tr>
+<tr>
+<td>Level 2（中等）</td>
+<td>15 条</td>
+<td>需 1 次 LLM 调用 + 槽位提取</td>
+<td>“我的订单123456怎么还没送到？”</td>
+</tr>
+<tr>
+<td>Level 3（复杂）</td>
+<td>12 条</td>
+<td>需多次 LLM 调用或函数执行</td>
+<td>“我上周三晚上的订单吃坏了肚子，订单号不记得了”</td>
+</tr>
+<tr>
+<td>Level 4（极端/边界）</td>
+<td>8 条</td>
+<td>情绪激烈、模糊表达、多方纠纷</td>
+<td>“这破平台天天出问题，315我都打过了！”</td>
+</tr>
+<tr>
+<td>P0 核心场景</td>
+<td>标注</td>
+<td>安全/食品问题，必须正确处理</td>
+<td>“吃出来了塑料”、“过敏了”</td>
+</tr>
+</tbody>
+</table>
+<h3 id="评测指标体系">5.2 评测指标体系</h3>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 22%" />
+<col style="width: 33%" />
+<col style="width: 22%" />
+</colgroup>
+<thead>
+<tr>
+<th>指标</th>
+<th>定义</th>
+<th>计算方式</th>
+<th>权重</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>P50 延迟</strong></td>
+<td>50% 请求的响应时间</td>
+<td>从请求到返回首字节</td>
+<td>20%</td>
+</tr>
+<tr>
+<td><strong>P99 延迟</strong></td>
+<td>99% 请求的响应时间</td>
+<td>尾部延迟保障</td>
+<td>15%</td>
+</tr>
+<tr>
+<td><strong>意图准确率</strong></td>
+<td>意图分类正确的比例</td>
+<td>Grader 判断</td>
+<td>25%</td>
+</tr>
+<tr>
+<td><strong>槽位召回率</strong></td>
+<td>必要槽位被正确提取的比例</td>
+<td>人工标注 vs 系统提取</td>
+<td>20%</td>
+</tr>
+<tr>
+<td><strong>Task 完成率</strong></td>
+<td>用户问题被正确解决的比例</td>
+<td>Grader 评分 ≥ 4/5</td>
+<td>30%</td>
+</tr>
+<tr>
+<td><strong>Token 消耗</strong></td>
+<td>单次请求平均 token 消耗</td>
+<td>Input + Output</td>
+<td>成本指标</td>
+</tr>
+<tr>
+<td><strong>转人工召回率</strong></td>
+<td>应该转人工的场景被正确触发的比例</td>
+<td>标注数据评测</td>
+<td>安全指标</td>
+</tr>
+</tbody>
+</table>
+<h3 id="评测流程">5.3 评测流程</h3>
+<pre><code>测试用例（50条）
+     │
+     ▼
+┌─────────────┐  ┌─────────────┐  ┌─────────────┐
+│SerialPipeline│ │Multi-Agent │  │Hybrid      │
+│  (对照组)   │ │  Bus       │  │Coordinator │
+│  浣熊当前   │  │  (对比组)  │  │  (实验组)  │
+└──────┬──────┘  └──────┬─────┘  └──────┬──────┘
+       │                 │                │
+       ▼                 ▼                ▼
+   响应结果         响应结果          响应结果
+       │                 │                │
+       └─────────────────┼────────────────┘
+                         ▼
+              ┌─────────────────────┐
+              │   Grader Agent     │  ← LLM-as-Judge 评分
+              │  各维度打分 + 判定  │
+              └──────────┬──────────┘
+                         ▼
+              ┌─────────────────────┐
+              │   Benchmark 报告   │
+              │  对比表格 + 雷达图 │
+              └─────────────────────┘</code></pre>
+<h3 id="预期结果">5.4 预期结果</h3>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 28%" />
+<col style="width: 28%" />
+<col style="width: 28%" />
+</colgroup>
+<thead>
+<tr>
+<th>指标</th>
+<th style="text-align: center;">Serial Pipeline（当前）</th>
+<th style="text-align: center;">Multi-Agent Bus</th>
+<th style="text-align: center;"><strong>Hybrid Coordinator</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P50 延迟</td>
+<td style="text-align: center;">2500ms</td>
+<td style="text-align: center;">1800ms</td>
+<td style="text-align: center;"><strong>1200ms</strong></td>
+</tr>
+<tr>
+<td>P99 延迟</td>
+<td style="text-align: center;">8000ms</td>
+<td style="text-align: center;">5000ms</td>
+<td style="text-align: center;"><strong>4500ms</strong></td>
+</tr>
+<tr>
+<td>意图准确率</td>
+<td style="text-align: center;">82%</td>
+<td style="text-align: center;">85%</td>
+<td style="text-align: center;"><strong>88%</strong></td>
+</tr>
+<tr>
+<td>槽位召回率</td>
+<td style="text-align: center;">75%</td>
+<td style="text-align: center;">78%</td>
+<td style="text-align: center;"><strong>82%</strong></td>
+</tr>
+<tr>
+<td>Task 完成率</td>
+<td style="text-align: center;">68%</td>
+<td style="text-align: center;">75%</td>
+<td style="text-align: center;"><strong>80%</strong></td>
+</tr>
+<tr>
+<td>Token 消耗/请求</td>
+<td style="text-align: center;">3800</td>
+<td style="text-align: center;">4200</td>
+<td style="text-align: center;"><strong>3100</strong></td>
+</tr>
+<tr>
+<td>转人工召回率</td>
+<td style="text-align: center;">70%</td>
+<td style="text-align: center;">72%</td>
+<td style="text-align: center;"><strong>85%</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="六生产落地关键要素">六、生产落地关键要素</h2>
+<h3 id="可观测性生死线">6.1 可观测性（生死线）</h3>
+<p>生产环境必须建设全链路追踪：</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># OpenTelemetry 埋点示例</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> opentelemetry <span class="im">import</span> trace</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a> tracer <span class="op">=</span> trace.get_tracer(<span class="va">__name__</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> chat_flow(query: <span class="bu">str</span>):</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> tracer.start_as_current_span(<span class="st">&quot;router_agent&quot;</span>) <span class="im">as</span> span:</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        span.set_attribute(<span class="st">&quot;query&quot;</span>, query)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        intent <span class="op">=</span> <span class="cf">await</span> router.decide(query)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        span.set_attribute(<span class="st">&quot;intent&quot;</span>, intent)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> tracer.start_as_current_span(<span class="ss">f&quot;</span><span class="sc">{</span>intent<span class="sc">}</span><span class="ss">_agent&quot;</span>):</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> <span class="cf">await</span> execute_agent(intent, query)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> tracer.start_as_current_span(<span class="st">&quot;generator_agent&quot;</span>):</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>        reply <span class="op">=</span> <span class="cf">await</span> generator.generate(result)</span></code></pre></div>
+<p>关键 Trace
+链路：<code>trace_id → router → knowledge/action/hybrid → generator → memory</code></p>
+<p>推荐工具：OpenTelemetry + LangSmith / Arize / Helicone</p>
+<h3 id="成本控制">6.2 成本控制</h3>
+<table>
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 28%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr>
+<th>策略</th>
+<th>说明</th>
+<th>预期节省</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>意图分类前置</td>
+<td>小模型（GPT-4o-mini / DeBERTa）做 Tier-1 分类</td>
+<td>40-60% Token</td>
+</tr>
+<tr>
+<td>上下文截断</td>
+<td>超过 128K 后主动压缩对话历史</td>
+<td>避免成本爆炸</td>
+</tr>
+<tr>
+<td>路由分流</td>
+<td>简单问题不走完整 Pipeline</td>
+<td>50-70% 简单请求节省</td>
+</tr>
+<tr>
+<td>缓存复用</td>
+<td>相同意图+槽位的结果缓存</td>
+<td>减少重复 LLM 调用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="安全与合规">6.3 安全与合规</h3>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>应对措施</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prompt 注入</td>
+<td>输入清洗 + 长度限制</td>
+</tr>
+<tr>
+<td>隐私泄露</td>
+<td>PII 检测（手机号/地址等）脱敏</td>
+</tr>
+<tr>
+<td>过度承诺</td>
+<td>回复生成增加安全过滤层</td>
+</tr>
+<tr>
+<td>模型幻觉</td>
+<td>RAG 结果必须带来源标注</td>
+</tr>
+</tbody>
+</table>
+<h3 id="人工兜底">6.4 人工兜底</h3>
+<p>再好的 Agent 也有 8-15% 无法解决。必须内置：</p>
+<ul>
+<li><strong>主动识别</strong>：置信度 &lt; 0.6 + 连续负面情绪 + 超出范围
+→ 立即转人工</li>
+<li><strong>被动兜底</strong>：用户明确要求转人工</li>
+<li><strong>反馈闭环</strong>：人工处理结果回流到训练数据</li>
+</ul>
+<hr />
+<h2 id="七langgraph-核心实现">七、LangGraph 核心实现</h2>
+<h3 id="技术选型">7.1 技术选型</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>层级</th>
+<th>框架</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Multi-Agent 编排</strong></td>
+<td><strong>LangGraph</strong></td>
+<td>支持有状态循环、消息传递、人机切换，比 LangChain Agents
+更适合复杂对话编排</td>
+</tr>
+<tr>
+<td><strong>LLM 调用</strong></td>
+<td>LangChain + DeepSeek SDK</td>
+<td>统一接口，支持 12 个 Prompt 模板管理</td>
+</tr>
+<tr>
+<td><strong>RAG</strong></td>
+<td>LangChain ChromaDB 集成</td>
+<td>复用现有 ChromaDB</td>
+</tr>
+<tr>
+<td><strong>向量数据库</strong></td>
+<td>ChromaDB（已有）</td>
+<td>无需更换</td>
+</tr>
+<tr>
+<td><strong>Memory</strong></td>
+<td>LangGraph Checkpoint + ChromaDB</td>
+<td>短期记忆用 Checkpointer，长期用 ChromaDB</td>
+</tr>
+<tr>
+<td><strong>评测框架</strong></td>
+<td>LangSmith + 自建 Grader</td>
+<td>LangSmith 提供 trace、latency、token 追踪</td>
+</tr>
+<tr>
+<td><strong>可观测性</strong></td>
+<td>OpenTelemetry + LangSmith</td>
+<td>全链路追踪</td>
+</tr>
+<tr>
+<td><strong>部署</strong></td>
+<td>FastAPI + uvicorn（已有）</td>
+<td>保持不变</td>
+</tr>
+</tbody>
+</table>
+<h3 id="状态定义">7.2 状态定义</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langgraph.graph <span class="im">import</span> StateGraph, END, START</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langgraph.prebuilt <span class="im">import</span> ToolNode</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> TypedDict, Annotated, Sequence</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain_core.messages <span class="im">import</span> BaseMessage, HumanMessage, AIMessage</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> operator</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CustomerServiceState(TypedDict):</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;客服系统共享状态&quot;&quot;&quot;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 基础信息</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    query: <span class="bu">str</span>                          <span class="co"># 用户原始消息</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    session_id: <span class="bu">str</span>                     <span class="co"># 会话 ID</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    user_id: <span class="bu">str</span>                        <span class="co"># 用户 ID</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Router 输出（合并原 Step 0-5）</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    memory_snapshot: <span class="bu">dict</span>               <span class="co"># 三层记忆快照</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    intent: <span class="bu">str</span>                         <span class="co"># 意图分类结果</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    stage: <span class="bu">str</span>                          <span class="co"># 阶段（售前/售中/售后）</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    emotion: <span class="bu">str</span>                        <span class="co"># 情感（正面/中性/负面）</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    confidence: <span class="bu">float</span>                   <span class="co"># 置信度</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    escalate: <span class="bu">bool</span>                      <span class="co"># 是否转人工</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 路由决策</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    route: <span class="bu">str</span>                          <span class="co"># KNOWLEDGE / ACTION / HYBRID / CHITCHAT / ESCALATE</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 下游 Agent 结果</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    slots: <span class="bu">dict</span>                        <span class="co"># 槽位提取结果</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    rag_results: <span class="bu">list</span>                   <span class="co"># RAG 检索结果</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    function_results: <span class="bu">dict</span>              <span class="co"># 函数执行结果</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 最终输出</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>    reply: <span class="bu">str</span>                          <span class="co"># 最终回复</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>    memory_updates: <span class="bu">dict</span>                <span class="co"># 记忆更新</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 追踪信息</span></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>    latency_ms: <span class="bu">float</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>    tokens: <span class="bu">int</span></span></code></pre></div>
+<h3 id="agent-节点实现">7.3 Agent 节点实现</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain_deepseek <span class="im">import</span> ChatDeepSeek</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain_core.prompts <span class="im">import</span> ChatPromptTemplate</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.chromadb <span class="im">import</span> Chromadb</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain_core.tools <span class="im">import</span> tool</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 初始化 LLM</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>llm <span class="op">=</span> ChatDeepSeek(</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span><span class="st">&quot;deepseek-chat&quot;</span>,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    temperature<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    api_key<span class="op">=</span>os.getenv(<span class="st">&quot;DEEPSEEK_API_KEY&quot;</span>),</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    base_url<span class="op">=</span><span class="st">&quot;https://api.deepseek.com&quot;</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Router Agent（接管 Step 0-5）──────────────────────────────</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>router_prompt <span class="op">=</span> ChatPromptTemplate.from_messages([</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;system&quot;</span>, <span class="st">&quot;&quot;&quot;你是一个外卖客服系统的路由决策 Agent。</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="st">接管原 Pipeline Step 0-5：记忆召回、文本纠正、意图识别、话题切换、阶段判断、情感检测、转人工判断。</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="st">请同时输出以下信息（一次 LLM 调用）：</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="st">1. intent：意图分类（从 </span><span class="sc">{intent_list}</span><span class="st"> 中选择）</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="st">2. stage：对话阶段（presale/sale/after_sale）</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="st">3. emotion：情感（positive/neutral/negative）</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="st">4. confidence：置信度（0.0-1.0）</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="st">5. escalate：是否转人工（true/false）</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="st">6. escalate_reason：转人工原因（如不转人工则为空）</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="st">7. brief_reply：闲聊类意图的直接回复（如不需要则为空）</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="st">输出格式为 JSON。&quot;&quot;&quot;</span>),</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;human&quot;</span>, <span class="st">&quot;用户消息：</span><span class="sc">{query}</span><span class="ch">\n</span><span class="st">历史摘要：</span><span class="sc">{history_summary}</span><span class="ch">\n</span><span class="st">用户画像：</span><span class="sc">{user_profile}</span><span class="st">&quot;</span>)</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>router_chain <span class="op">=</span> router_prompt <span class="op">|</span> llm.with_structured_output(RouterOutput)</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a><span class="at">@tool</span></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> router_agent(state: CustomerServiceState) <span class="op">-&gt;</span> CustomerServiceState:</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Router Agent：合并 Step 0-5，一次 LLM 调用输出多维信号&quot;&quot;&quot;</span></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 1. 召回三层记忆</span></span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>    memory <span class="op">=</span> recall_memory(state[<span class="st">&quot;session_id&quot;</span>], state[<span class="st">&quot;user_id&quot;</span>])</span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2. Router LLM 调用</span></span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> router_chain.invoke({</span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;query&quot;</span>: state[<span class="st">&quot;query&quot;</span>],</span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;history_summary&quot;</span>: memory[<span class="st">&quot;summary&quot;</span>],</span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;user_profile&quot;</span>: memory[<span class="st">&quot;profile&quot;</span>],</span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;intent_list&quot;</span>: load_intents()  <span class="co"># 从 intents.json 加载</span></span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 3. 路由决策</span></span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>    route <span class="op">=</span> decide_route(result[<span class="st">&quot;intent&quot;</span>], result[<span class="st">&quot;stage&quot;</span>],</span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>                         result[<span class="st">&quot;emotion&quot;</span>], result[<span class="st">&quot;slots&quot;</span>])</span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>        <span class="op">**</span>state,</span>
+<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;memory_snapshot&quot;</span>: memory,</span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;intent&quot;</span>: result[<span class="st">&quot;intent&quot;</span>],</span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;stage&quot;</span>: result[<span class="st">&quot;stage&quot;</span>],</span>
+<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;emotion&quot;</span>: result[<span class="st">&quot;emotion&quot;</span>],</span>
+<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;confidence&quot;</span>: result[<span class="st">&quot;confidence&quot;</span>],</span>
+<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;escalate&quot;</span>: result[<span class="st">&quot;escalate&quot;</span>],</span>
+<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;route&quot;</span>: route</span>
+<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-63"><a href="#cb12-63" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Knowledge Agent（接管 Step 6 + 8）─────────────────────────</span></span>
+<span id="cb12-64"><a href="#cb12-64" aria-hidden="true" tabindex="-1"></a><span class="at">@tool</span></span>
+<span id="cb12-65"><a href="#cb12-65" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> knowledge_agent(state: CustomerServiceState) <span class="op">-&gt;</span> CustomerServiceState:</span>
+<span id="cb12-66"><a href="#cb12-66" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Knowledge Agent：槽位提取 + 意图路由 RAG&quot;&quot;&quot;</span></span>
+<span id="cb12-67"><a href="#cb12-67" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 槽位提取</span></span>
+<span id="cb12-68"><a href="#cb12-68" aria-hidden="true" tabindex="-1"></a>    slots <span class="op">=</span> extract_slots(state[<span class="st">&quot;query&quot;</span>], state[<span class="st">&quot;intent&quot;</span>])</span>
+<span id="cb12-69"><a href="#cb12-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-70"><a href="#cb12-70" aria-hidden="true" tabindex="-1"></a>    <span class="co"># RAG 检索（按意图选择集合）</span></span>
+<span id="cb12-71"><a href="#cb12-71" aria-hidden="true" tabindex="-1"></a>    collection_map <span class="op">=</span> {</span>
+<span id="cb12-72"><a href="#cb12-72" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;product_inquiry&quot;</span>: <span class="st">&quot;products&quot;</span>,</span>
+<span id="cb12-73"><a href="#cb12-73" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;faq&quot;</span>: <span class="st">&quot;faq&quot;</span>,</span>
+<span id="cb12-74"><a href="#cb12-74" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;policy_inquiry&quot;</span>: <span class="st">&quot;policies&quot;</span></span>
+<span id="cb12-75"><a href="#cb12-75" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb12-76"><a href="#cb12-76" aria-hidden="true" tabindex="-1"></a>    collection <span class="op">=</span> collection_map.get(state[<span class="st">&quot;intent&quot;</span>], <span class="st">&quot;faq&quot;</span>)</span>
+<span id="cb12-77"><a href="#cb12-77" aria-hidden="true" tabindex="-1"></a>    rag_results <span class="op">=</span> chromadb.query(</span>
+<span id="cb12-78"><a href="#cb12-78" aria-hidden="true" tabindex="-1"></a>        collection_name<span class="op">=</span>collection,</span>
+<span id="cb12-79"><a href="#cb12-79" aria-hidden="true" tabindex="-1"></a>        query_texts<span class="op">=</span>[state[<span class="st">&quot;query&quot;</span>]],</span>
+<span id="cb12-80"><a href="#cb12-80" aria-hidden="true" tabindex="-1"></a>        n_results<span class="op">=</span><span class="dv">3</span></span>
+<span id="cb12-81"><a href="#cb12-81" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-82"><a href="#cb12-82" aria-hidden="true" tabindex="-1"></a>    rag_results <span class="op">=</span> [r <span class="cf">for</span> r <span class="kw">in</span> rag_results[<span class="st">&quot;documents&quot;</span>][<span class="dv">0</span>]</span>
+<span id="cb12-83"><a href="#cb12-83" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> r.get(<span class="st">&quot;score&quot;</span>, <span class="dv">0</span>) <span class="op">&gt;=</span> <span class="fl">0.55</span>]</span>
+<span id="cb12-84"><a href="#cb12-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-85"><a href="#cb12-85" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="op">**</span>state, <span class="st">&quot;slots&quot;</span>: slots, <span class="st">&quot;rag_results&quot;</span>: rag_results}</span>
+<span id="cb12-86"><a href="#cb12-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-87"><a href="#cb12-87" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Action Agent（接管 Step 6 + 8.5）──────────────────────</span></span>
+<span id="cb12-88"><a href="#cb12-88" aria-hidden="true" tabindex="-1"></a><span class="at">@tool</span></span>
+<span id="cb12-89"><a href="#cb12-89" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> action_agent(state: CustomerServiceState) <span class="op">-&gt;</span> CustomerServiceState:</span>
+<span id="cb12-90"><a href="#cb12-90" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Action Agent：槽位提取 + 函数执行（支持 Agent Loop）&quot;&quot;&quot;</span></span>
+<span id="cb12-91"><a href="#cb12-91" aria-hidden="true" tabindex="-1"></a>    slots <span class="op">=</span> extract_slots(state[<span class="st">&quot;query&quot;</span>], state[<span class="st">&quot;intent&quot;</span>])</span>
+<span id="cb12-92"><a href="#cb12-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-93"><a href="#cb12-93" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 加载 functions.json 中的函数定义</span></span>
+<span id="cb12-94"><a href="#cb12-94" aria-hidden="true" tabindex="-1"></a>    functions <span class="op">=</span> load_functions()</span>
+<span id="cb12-95"><a href="#cb12-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-96"><a href="#cb12-96" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Agent Loop：Think → Act → Observe → Decide（最多 3 次）</span></span>
+<span id="cb12-97"><a href="#cb12-97" aria-hidden="true" tabindex="-1"></a>    loop_state <span class="op">=</span> {<span class="st">&quot;slots&quot;</span>: slots, <span class="st">&quot;results&quot;</span>: [], <span class="st">&quot;iteration&quot;</span>: <span class="dv">0</span>}</span>
+<span id="cb12-98"><a href="#cb12-98" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
+<span id="cb12-99"><a href="#cb12-99" aria-hidden="true" tabindex="-1"></a>        think_result <span class="op">=</span> think_step(loop_state, state[<span class="st">&quot;query&quot;</span>])</span>
+<span id="cb12-100"><a href="#cb12-100" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> think_result[<span class="st">&quot;action&quot;</span>] <span class="op">==</span> <span class="st">&quot;respond&quot;</span>:</span>
+<span id="cb12-101"><a href="#cb12-101" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
+<span id="cb12-102"><a href="#cb12-102" aria-hidden="true" tabindex="-1"></a>        act_result <span class="op">=</span> act_step(think_result[<span class="st">&quot;function&quot;</span>], think_result[<span class="st">&quot;args&quot;</span>])</span>
+<span id="cb12-103"><a href="#cb12-103" aria-hidden="true" tabindex="-1"></a>        observe_result <span class="op">=</span> observe_step(act_result)</span>
+<span id="cb12-104"><a href="#cb12-104" aria-hidden="true" tabindex="-1"></a>        decide_result <span class="op">=</span> decide_step(observe_result, state[<span class="st">&quot;query&quot;</span>])</span>
+<span id="cb12-105"><a href="#cb12-105" aria-hidden="true" tabindex="-1"></a>        loop_state[<span class="st">&quot;results&quot;</span>].append(observe_result)</span>
+<span id="cb12-106"><a href="#cb12-106" aria-hidden="true" tabindex="-1"></a>        loop_state[<span class="st">&quot;iteration&quot;</span>] <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb12-107"><a href="#cb12-107" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> decide_result[<span class="st">&quot;action&quot;</span>] <span class="kw">in</span> [<span class="st">&quot;respond&quot;</span>, <span class="st">&quot;ask_user&quot;</span>]:</span>
+<span id="cb12-108"><a href="#cb12-108" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
+<span id="cb12-109"><a href="#cb12-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-110"><a href="#cb12-110" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="op">**</span>state, <span class="st">&quot;slots&quot;</span>: loop_state[<span class="st">&quot;slots&quot;</span>],</span>
+<span id="cb12-111"><a href="#cb12-111" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;function_results&quot;</span>: loop_state[<span class="st">&quot;results&quot;</span>]}</span>
+<span id="cb12-112"><a href="#cb12-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-113"><a href="#cb12-113" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Generator Agent（接管 Step 9 + 10）────────────────────</span></span>
+<span id="cb12-114"><a href="#cb12-114" aria-hidden="true" tabindex="-1"></a><span class="at">@tool</span></span>
+<span id="cb12-115"><a href="#cb12-115" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generator_agent(state: CustomerServiceState) <span class="op">-&gt;</span> CustomerServiceState:</span>
+<span id="cb12-116"><a href="#cb12-116" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Generator Agent：综合所有结果生成最终回复&quot;&quot;&quot;</span></span>
+<span id="cb12-117"><a href="#cb12-117" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> generator_chain.invoke({</span>
+<span id="cb12-118"><a href="#cb12-118" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;query&quot;</span>: state[<span class="st">&quot;query&quot;</span>],</span>
+<span id="cb12-119"><a href="#cb12-119" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;intent&quot;</span>: state[<span class="st">&quot;intent&quot;</span>],</span>
+<span id="cb12-120"><a href="#cb12-120" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;slots&quot;</span>: state.get(<span class="st">&quot;slots&quot;</span>, {}),</span>
+<span id="cb12-121"><a href="#cb12-121" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;rag_results&quot;</span>: state.get(<span class="st">&quot;rag_results&quot;</span>, []),</span>
+<span id="cb12-122"><a href="#cb12-122" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;function_results&quot;</span>: state.get(<span class="st">&quot;function_results&quot;</span>, {}),</span>
+<span id="cb12-123"><a href="#cb12-123" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;history_summary&quot;</span>: state[<span class="st">&quot;memory_snapshot&quot;</span>].get(<span class="st">&quot;summary&quot;</span>, <span class="st">&quot;&quot;</span>),</span>
+<span id="cb12-124"><a href="#cb12-124" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;sop&quot;</span>: load_sop(state[<span class="st">&quot;intent&quot;</span>])</span>
+<span id="cb12-125"><a href="#cb12-125" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb12-126"><a href="#cb12-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-127"><a href="#cb12-127" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="op">**</span>state, <span class="st">&quot;reply&quot;</span>: result[<span class="st">&quot;reply&quot;</span>], <span class="st">&quot;memory_updates&quot;</span>: result[<span class="st">&quot;facts&quot;</span>]}</span>
+<span id="cb12-128"><a href="#cb12-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-129"><a href="#cb12-129" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Memory Agent（接管 Step 0 + 10）──────────────────────</span></span>
+<span id="cb12-130"><a href="#cb12-130" aria-hidden="true" tabindex="-1"></a><span class="at">@tool</span></span>
+<span id="cb12-131"><a href="#cb12-131" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> memory_agent(state: CustomerServiceState) <span class="op">-&gt;</span> CustomerServiceState:</span>
+<span id="cb12-132"><a href="#cb12-132" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Memory Agent：三层记忆管理（短期/工作/长期）+ ChromaDB 持久化&quot;&quot;&quot;</span></span>
+<span id="cb12-133"><a href="#cb12-133" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 1. 短期记忆：写入当前对话上下文</span></span>
+<span id="cb12-134"><a href="#cb12-134" aria-hidden="true" tabindex="-1"></a>    append_short_term(state[<span class="st">&quot;session_id&quot;</span>], state[<span class="st">&quot;query&quot;</span>], state[<span class="st">&quot;reply&quot;</span>])</span>
+<span id="cb12-135"><a href="#cb12-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-136"><a href="#cb12-136" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2. 工作记忆：超过 8 轮则压缩</span></span>
+<span id="cb12-137"><a href="#cb12-137" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> get_conversation_turns(state[<span class="st">&quot;session_id&quot;</span>]) <span class="op">&gt;</span> <span class="dv">8</span>:</span>
+<span id="cb12-138"><a href="#cb12-138" aria-hidden="true" tabindex="-1"></a>        compress_to_working(state[<span class="st">&quot;session_id&quot;</span>])</span>
+<span id="cb12-139"><a href="#cb12-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-140"><a href="#cb12-140" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 3. 长期记忆：持久化关键事实</span></span>
+<span id="cb12-141"><a href="#cb12-141" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> state.get(<span class="st">&quot;memory_updates&quot;</span>):</span>
+<span id="cb12-142"><a href="#cb12-142" aria-hidden="true" tabindex="-1"></a>        upsert_long_term(state[<span class="st">&quot;user_id&quot;</span>], state[<span class="st">&quot;memory_updates&quot;</span>])</span>
+<span id="cb12-143"><a href="#cb12-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-144"><a href="#cb12-144" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> state</span></code></pre></div>
+<h3 id="langgraph-流程编排">7.4 LangGraph 流程编排</h3>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langgraph.graph <span class="im">import</span> StateGraph, END, START</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langgraph.checkpoint.memory <span class="im">import</span> MemorySaver</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 构建图</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>graph <span class="op">=</span> StateGraph(CustomerServiceState)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 添加节点</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>graph.add_node(<span class="st">&quot;router&quot;</span>, router_agent)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>graph.add_node(<span class="st">&quot;knowledge&quot;</span>, knowledge_agent)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>graph.add_node(<span class="st">&quot;action&quot;</span>, action_agent)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>graph.add_node(<span class="st">&quot;generator&quot;</span>, generator_agent)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>graph.add_node(<span class="st">&quot;memory&quot;</span>, memory_agent)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 添加边</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>graph.add_edge(START, <span class="st">&quot;router&quot;</span>)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Router 条件边：按路由分发</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> route_decision(state: CustomerServiceState) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> state.get(<span class="st">&quot;escalate&quot;</span>):</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;escalate&quot;</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    route <span class="op">=</span> state.get(<span class="st">&quot;route&quot;</span>, <span class="st">&quot;HYBRID&quot;</span>)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> route</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>graph.add_conditional_edges(</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;router&quot;</span>,</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>    route_decision,</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;CHITCHAT&quot;</span>: <span class="st">&quot;generator&quot;</span>,    <span class="co"># 闲聊直接生成</span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;KNOWLEDGE&quot;</span>: <span class="st">&quot;knowledge&quot;</span>,    <span class="co"># 知识查询</span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;ACTION&quot;</span>: <span class="st">&quot;action&quot;</span>,         <span class="co"># 函数执行</span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;HYBRID&quot;</span>: <span class="st">&quot;knowledge&quot;</span>,       <span class="co"># HYBRID: 知识 + 函数并行</span></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;ESCALATE&quot;</span>: <span class="st">&quot;generator&quot;</span>      <span class="co"># 转人工</span></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a><span class="co"># HYBRID 路由：knowledge 和 action 并行执行</span></span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>graph.add_edge(<span class="st">&quot;knowledge&quot;</span>, <span class="st">&quot;generator&quot;</span>)</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>graph.add_edge(<span class="st">&quot;action&quot;</span>, <span class="st">&quot;generator&quot;</span>)</span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>graph.add_edge(<span class="st">&quot;generator&quot;</span>, <span class="st">&quot;memory&quot;</span>)</span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>graph.add_edge(<span class="st">&quot;memory&quot;</span>, END)</span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a><span class="co"># 编译图（带 Checkpoint 持久化）</span></span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>checkpointer <span class="op">=</span> MemorySaver()</span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> graph.<span class="bu">compile</span>(checkpointer<span class="op">=</span>checkpointer)</span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a><span class="co"># 推理入口</span></span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> chat(query: <span class="bu">str</span>, session_id: <span class="bu">str</span>, user_id: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>    config <span class="op">=</span> {<span class="st">&quot;configurable&quot;</span>: {<span class="st">&quot;thread_id&quot;</span>: session_id}}</span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> app.invoke({</span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;query&quot;</span>: query,</span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;session_id&quot;</span>: session_id,</span>
+<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;user_id&quot;</span>: user_id,</span>
+<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a>    }, config)</span>
+<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;reply&quot;</span>: result[<span class="st">&quot;reply&quot;</span>],</span>
+<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;intent&quot;</span>: result[<span class="st">&quot;intent&quot;</span>],</span>
+<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;route&quot;</span>: result[<span class="st">&quot;route&quot;</span>],</span>
+<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;escalate&quot;</span>: result.get(<span class="st">&quot;escalate&quot;</span>, <span class="va">False</span>)</span>
+<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
+<h3 id="agent-loop-实现step-8.5-增强版">7.5 Agent Loop 实现（Step 8.5
+增强版）</h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="at">@dataclass</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> LoopStep:</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    thought: <span class="bu">str</span>       <span class="co"># Think: 推理过程</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    action: <span class="bu">str</span>         <span class="co"># Act: 要执行的函数</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    args: <span class="bu">dict</span>         <span class="co"># Act: 函数参数</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    observation: <span class="bu">str</span>    <span class="co"># Observe: 执行结果</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    decision: <span class="bu">str</span>       <span class="co"># Decide: respond / continue / ask_user</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> think_step(loop_state: <span class="bu">dict</span>, query: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Think：LLM 决定下一步动作&quot;&quot;&quot;</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    prompt <span class="op">=</span> <span class="ss">f&quot;&quot;&quot;当前状态：</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="ss">- 已执行结果：</span><span class="sc">{</span>loop_state[<span class="st">&#39;results&#39;</span>]<span class="sc">}</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- 槽位：</span><span class="sc">{</span>loop_state[<span class="st">&#39;slots&#39;</span>]<span class="sc">}</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- 用户消息：</span><span class="sc">{</span>query<span class="sc">}</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="ss">请决定下一步动作：</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- action: 要调用的函数名（如 respond 表示完成）</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- args: 函数参数（如槽位缺失则 ask_user）</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- reasoning: 推理过程&quot;&quot;&quot;</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> llm.invoke(prompt)</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> parse_action(result)</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> act_step(function_name: <span class="bu">str</span>, args: <span class="bu">dict</span>) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Act：执行函数&quot;&quot;&quot;</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> function_name <span class="op">==</span> <span class="st">&quot;respond&quot;</span>:</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> {<span class="st">&quot;observation&quot;</span>: <span class="st">&quot;DONE&quot;</span>}</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>    func <span class="op">=</span> get_function(function_name)</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">&quot;observation&quot;</span>: func.invoke(args)}</span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> observe_step(act_result: <span class="bu">dict</span>) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Observe：解析执行结果，注入槽位&quot;&quot;&quot;</span></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> act_result</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> decide_step(observation: <span class="bu">dict</span>, query: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Decide：判断是否继续或结束&quot;&quot;&quot;</span></span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> observation.get(<span class="st">&quot;observation&quot;</span>) <span class="op">==</span> <span class="st">&quot;DONE&quot;</span>:</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> {<span class="st">&quot;action&quot;</span>: <span class="st">&quot;respond&quot;</span>}</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">&quot;缺少&quot;</span> <span class="kw">in</span> <span class="bu">str</span>(observation) <span class="kw">or</span> <span class="st">&quot;不确定&quot;</span> <span class="kw">in</span> <span class="bu">str</span>(observation):</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> {<span class="st">&quot;action&quot;</span>: <span class="st">&quot;ask_user&quot;</span>}</span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">&quot;action&quot;</span>: <span class="st">&quot;continue&quot;</span>}</span></code></pre></div>
+<h3 id="fastapi-服务接入">7.6 FastAPI 服务接入</h3>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastapi <span class="im">import</span> FastAPI, HTTPException</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> FastAPI(title<span class="op">=</span><span class="st">&quot;食堂外卖智能客服 API&quot;</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ChatRequest(BaseModel):</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    query: <span class="bu">str</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    session_id: <span class="bu">str</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    user_id: <span class="bu">str</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ChatResponse(BaseModel):</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    reply: <span class="bu">str</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    intent: <span class="bu">str</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    route: <span class="bu">str</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    escalate: <span class="bu">bool</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    latency_ms: <span class="bu">float</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    tokens: <span class="bu">int</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="at">@app.post</span>(<span class="st">&quot;/chat&quot;</span>, response_model<span class="op">=</span>ChatResponse)</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> chat_endpoint(req: ChatRequest):</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> time.time()</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> chat(req.query, req.session_id, req.user_id)</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ChatResponse(</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>            reply<span class="op">=</span>result[<span class="st">&quot;reply&quot;</span>],</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>            intent<span class="op">=</span>result[<span class="st">&quot;intent&quot;</span>],</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>            route<span class="op">=</span>result[<span class="st">&quot;route&quot;</span>],</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>            escalate<span class="op">=</span>result.get(<span class="st">&quot;escalate&quot;</span>, <span class="va">False</span>),</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>            latency_ms<span class="op">=</span>(time.time() <span class="op">-</span> start) <span class="op">*</span> <span class="dv">1000</span>,</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>            tokens<span class="op">=</span>result.get(<span class="st">&quot;tokens&quot;</span>, <span class="dv">0</span>)</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> HTTPException(status_code<span class="op">=</span><span class="dv">500</span>, detail<span class="op">=</span><span class="bu">str</span>(e))</span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a><span class="at">@app.post</span>(<span class="st">&quot;/reset/</span><span class="sc">{session_id}</span><span class="st">&quot;</span>)</span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> reset_session(session_id: <span class="bu">str</span>):</span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>    checkpointer.delete({<span class="st">&quot;configurable&quot;</span>: {<span class="st">&quot;thread_id&quot;</span>: session_id}})</span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">&quot;status&quot;</span>: <span class="st">&quot;ok&quot;</span>}</span></code></pre></div>
+<h3 id="依赖清单">7.7 依赖清单</h3>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode txt"><code class="sourceCode default"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a># requirements.txt</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>langgraph&gt;=0.2.0</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>langchain&gt;=0.3.0</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>langchain-deepseek&gt;=0.1.0</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>langchain-chroma&gt;=0.1.0</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>langchain-core&gt;=0.3.0</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>deepseek-sdk&gt;=1.0.0</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>chromadb&gt;=0.4.0</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>fastapi&gt;=0.110.0</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>uvicorn[standard]&gt;=0.27.0</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>pydantic&gt;=2.0</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>opentelemetry-api&gt;=1.22.0</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>opentelemetry-sdk&gt;=1.22.0</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>httpx&gt;=0.27.0</span></code></pre></div>
+<hr />
+<h2 id="八总结与建议">八、总结与建议</h2>
+<h3 id="核心结论">8.1 核心结论</h3>
+<ol type="1">
+<li><strong>当前浣熊系统</strong>的串行 Pipeline
+架构清晰、成本可控，适合快速验证</li>
+<li><strong>演进方向</strong>为 Hybrid Coordinator +
+LangGraph，兼顾性能与可维护性</li>
+<li><strong>演进策略</strong>为渐进式：Phase 1 Router 合并 → Phase 2
+动态路由 → Phase 3 Multi-Agent</li>
+<li><strong>评测先行</strong>：用 Benchmark
+量化改进效果，避免主观决策</li>
+<li><strong>框架选型</strong>：LangGraph 是当前最成熟的开源 Multi-Agent
+编排框架，与现有 ChromaDB 无缝集成</li>
+</ol>
+<h3 id="优先级建议">8.2 优先级建议</h3>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 19%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr>
+<th>优先级</th>
+<th>行动项</th>
+<th>周期</th>
+<th>预期收益</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P0</td>
+<td>Phase 1 Router 合并（Step 0-5 → 一次 LLM）</td>
+<td>2-4 周</td>
+<td>P50 -30%，Token -20%</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>接入 Benchmark 评测框架</td>
+<td>2 周</td>
+<td>建立量化优化基线</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>Phase 2 动态路由</td>
+<td>4-8 周</td>
+<td>完成率 +7-10%</td>
+</tr>
+<tr>
+<td>P3</td>
+<td>全链路可观测性建设（LangSmith + OpenTelemetry）</td>
+<td>4 周</td>
+<td>问题定位效率 +50%</td>
+</tr>
+<tr>
+<td>P4</td>
+<td>Phase 3 Hybrid + Memory 共享</td>
+<td>8-16 周</td>
+<td>完成率 85%+</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<blockquote>
+<p>仅供内部使用，未经授权，切勿外传</p>
+</blockquote>
+</body>
+</html>
