@@ -1,0 +1,21 @@
+# RL training / finetuning
+trl
+peft
+wandb
+
+# Inference infrastructure
+vllm
+sglang
+ray
+flashinfer-python
+
+# Local reasoning demos
+streamlit
+ollama
+pydantic
+
+# API / search demos
+openai
+python-dotenv
+requests
+tavily-python

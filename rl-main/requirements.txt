@@ -1,0 +1,11 @@
+jupyterlab
+ipykernel
+numpy
+pandas
+matplotlib
+seaborn
+tqdm
+torch
+transformers
+datasets
+accelerate

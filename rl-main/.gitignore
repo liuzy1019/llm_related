@@ -1,0 +1,44 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Notebook
+.ipynb_checkpoints/
+
+# Local environments and secrets
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+env/
+credentials/
+secrets/
+*.token
+*.secret
+
+# Training / inference artifacts
+unsloth_compiled_cache/
+wandb/
+runs/
+outputs/
+checkpoints/
+logs/
+models/
+data/cache/
+*.ckpt
+*.pt
+*.pth
+*.safetensors
+*.gguf
