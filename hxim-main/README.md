@@ -1,4 +1,4 @@
-# hx-customer-service-agent
+# hxim-main
 
 > 基于 `hx_im` 两份浣熊食堂客服方案实现的 LangGraph agent 项目骨架。
 
@@ -16,7 +16,7 @@
 ## 项目结构
 
 ```text
-hx-customer-service-agent/
+hxim-main/
 ├── app/
 │   ├── agents/customer_service_graph.py
 │   ├── domain/catalog.py
@@ -26,16 +26,26 @@ hx-customer-service-agent/
 │   ├── api.py
 │   └── settings.py
 ├── docs/ARCHITECTURE.md
+├── docs/ROADMAP.md
+├── docs/PROGRESS_LOG.md
+├── docs/RELEASE_PROCESS.md
 ├── scripts/run_chat.py
 ├── tests/
 ├── requirements.txt
 └── .env.example
 ```
 
+## 项目文档
+
+- [Architecture](docs/ARCHITECTURE.md)：当前 LangGraph 编排与浣熊客服方案的映射。
+- [Roadmap](docs/ROADMAP.md)：v1.0 之后的每日发版计划与完整方案差距。
+- [Progress Log](docs/PROGRESS_LOG.md)：每日系统进度、验证结果和下一步记录。
+- [Release Process](docs/RELEASE_PROCESS.md)：每日版本发布、tag、推送和回滚规范。
+
 ## 快速启动
 
 ```bash
-cd hx-customer-service-agent
+cd hxim-main
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt

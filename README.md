@@ -9,7 +9,7 @@
 | 项目 | 说明 | 入口 |
 | --- | --- | --- |
 | **langgraph-scaffold** | LangGraph 生产级 Agent 脚手架：ReAct / Plan & Execute / Multi-Agent 三种模式 + 持久化 + LangSmith + 测试模板，内置 Mock LLM 离线可跑 | [`langgraph-scaffold/`](langgraph-scaffold/) |
-| **hx-customer-service-agent** | 基于浣熊食堂客服方案的 Hybrid Coordinator 客服 Agent：Router / Knowledge / Action / Generator / Memory，离线规则模式可跑 | [`hx-customer-service-agent/`](hx-customer-service-agent/) |
+| **hxim-main** | 基于浣熊食堂客服方案的 Hybrid Coordinator 客服 Agent：Router / Knowledge / Action / Generator / Memory，离线规则模式可跑 | [`hxim-main/`](hxim-main/) |
 | **rl-main** | 大模型 RL / RLHF / GRPO / reasoning / 推理基础设施 notebook 笔记库，包含 RL 基础、verl、vLLM、SGLang、Agent RL 等主题 | [`rl-main/`](rl-main/) |
 
 > 后续会继续往这里加新的 LLM 相关项目子目录（RAG、Prompt 工程、Eval、Fine-tune 等）。

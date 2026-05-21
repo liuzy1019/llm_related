@@ -22,7 +22,7 @@ def _get_bool(name: str, default: bool = False) -> bool:
 
 @dataclass(frozen=True)
 class Settings:
-    app_name: str = os.getenv("APP_NAME", "hx-customer-service-agent")
+    app_name: str = os.getenv("APP_NAME", "hxim-main")
     mock_mode: bool = _get_bool("MOCK_MODE", True)
     max_agent_loop_iterations: int = int(os.getenv("MAX_AGENT_LOOP_ITERATIONS", "3"))
     default_user_id: str = os.getenv("DEFAULT_USER_ID", "demo-user")
