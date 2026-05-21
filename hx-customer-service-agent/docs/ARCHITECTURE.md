@@ -1,0 +1,59 @@
+# Architecture
+
+## 来源映射
+
+本项目综合了两份 `hx_im` 设计文档：
+
+- `客服agentv1.html`：当前/增强版 13 步 Pipeline 设计。
+- `食堂外卖智能客服系统开发方案.html`：Hybrid Coordinator + LangGraph 演进方案。
+
+## Pipeline 到 Agent 的映射
+
+| 原步骤 | 当前项目节点 | 说明 |
+| --- | --- | --- |
+| Step 0 记忆召回 | `router_agent` / `memory_agent` | 目前使用轻量内存快照占位 |
+| Step 0.5 文本纠正 | `router_agent` | 规则实现，如“吃出所料”纠正为“吃出塑料” |
+| Step 1 意图识别 | `router_agent` | 关键词规则，可替换为 LLM structured output |
+| Step 2 阶段判断 | `router_agent` | `presale / sale / after_sale / general` |
+| Step 3 情感检测 | `router_agent` | 正负向词典 |
+| Step 4 转人工判断 | `router_agent` | 人工请求、食品安全、敏感词优先升级 |
+| Step 5 路由决策 | `route_from_router` | 条件边分发到下游节点 |
+| Step 6 槽位提取 | `router_agent` | 订单号、手机号、食品安全槽位 |
+| Step 8 RAG | `knowledge_agent` | 离线知识库占位 |
+| Step 8.5 函数执行 | `action_agent` | 8 个业务函数占位，变更类强制确认 |
+| Step 9 回复生成 | `generator_agent` | 汇总知识和函数结果 |
+| Step 10 事实提取 | `memory_agent` | 提取口味偏好、过敏信息 |
+
+## Graph
+
+```text
+START
+  |
+router
+  |-- ESCALATE / CHITCHAT --> generator
+  |-- KNOWLEDGE -----------> knowledge --> generator
+  |-- ACTION --------------> action ----> generator
+  |-- HYBRID --------------> hybrid ----> generator
+                                              |
+                                           memory
+                                              |
+                                             END
+```
+
+## Demo Database
+
+演示版新增 `app/data/mock_database.py`，模拟真实业务系统中的几类数据：
+
+- 用户画像：手机号脱敏、默认地址、口味偏好、过敏信息。
+- 订单：商家、菜品、金额、订单状态、是否可取消、是否可退款。
+- 配送：骑手、距离、预计送达时间、最近事件。
+- 食品安全险：用于食品安全 P0 场景演示。
+
+当前业务函数不再返回固定文本，而是通过 `MOCK_DB` 查询订单状态。API 额外提供 `GET /demo/orders`，方便演示前查看可用订单。
+
+## 实现原则
+
+- 节点只返回局部 state 更新。
+- 追加型字段使用 reducer，避免覆盖历史 trace、RAG 和函数结果。
+- 业务变更函数只生成 `needs_confirmation`，不直接执行破坏性操作。
+- 离线规则只是第一阶段脚手架，目标是让工程结构先稳定，再逐个替换节点。
