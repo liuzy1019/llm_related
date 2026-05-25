@@ -1,0 +1,128 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+.eggs/
+build/
+dist/
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# 虚拟环境
+.venv/
+venv/
+env/
+ENV/
+.conda/
+
+# 测试 / 覆盖率
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.mypy_cache/
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ===== IDE / 编辑器 =====
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ===== 大文件 / 模型权重 =====
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.gguf
+*.h5
+*.msgpack
+*.tflite
+
+# Megatron / 训练 索引
+*.idx
+*.bin.idx
+*.npy
+*.npz
+
+# ===== 数据 =====
+# 整个 data 目录（语料、原始/清洗后数据通常很大）默认不提交
+data/
+!data/README.md
+!data/.gitkeep
+
+# 常见数据格式
+*.jsonl
+*.parquet
+*.arrow
+*.tsv
+*.csv.gz
+*.json.gz
+*.txt.gz
+*.zst
+*.zstd
+*.lz4
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+
+# ===== Tokenizer 训练产物 =====
+tokenizer/output/
+tokenizer/*.model
+tokenizer/*.vocab
+tokenizer/merges.txt
+tokenizer/vocab.json
+
+# ===== 预训练 / SFT 产物 =====
+pretrain/checkpoints/
+pretrain/logs/
+pretrain/outputs/
+pretrain/tensorboard/
+pretrain/wandb/
+
+sft/checkpoints/
+sft/outputs/
+sft/logs/
+
+convert_hf/output/
+convert_hf/hf_ckpt/
+
+# 通用产物目录
+checkpoints/
+outputs/
+logs/
+runs/
+wandb/
+mlruns/
+tensorboard/
+
+# ===== 凭证 / 环境变量 =====
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets/
+
+# ===== 临时文件 =====
+*.log
+*.tmp
+tmp/
+temp/
+scratch/
