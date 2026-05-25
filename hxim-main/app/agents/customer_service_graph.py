@@ -37,8 +37,12 @@ def router_agent(state: CustomerServiceState) -> dict[str, Any]:
     """Router Agent: merge Step 0-5 into a single routing decision."""
     query = state["query"]
     normalized_query = normalize_text(query)
-    intent, confidence = detect_intent(normalized_query)
-    slots = extract_slots(normalized_query)
+    carried_intent = state.get("carried_intent")
+    slots = {**state.get("carried_slots", {}), **extract_slots(normalized_query)}
+    if carried_intent:
+        intent, confidence = carried_intent, 0.91
+    else:
+        intent, confidence = detect_intent(normalized_query)
     stage = detect_stage(intent)
     emotion = detect_emotion(normalized_query)
     escalate, escalate_reason = should_escalate(
@@ -61,7 +65,10 @@ def router_agent(state: CustomerServiceState) -> dict[str, Any]:
         "escalate_reason": escalate_reason,
         "route": route,
         "slots": slots,
-        "trace": [f"router:{intent}:{route}"],
+        "trace": [
+            f"router:{intent}:{route}"
+            + (":carried" if carried_intent else ""),
+        ],
         "iteration_count": state.get("iteration_count", 0) + 1,
     }
 
@@ -69,7 +76,7 @@ def router_agent(state: CustomerServiceState) -> dict[str, Any]:
 def knowledge_agent(state: CustomerServiceState) -> dict[str, Any]:
     """Knowledge Agent: intent-routed RAG placeholder."""
     results = search_knowledge(
-        state.get("intent", "faq"),
+        state.get("intent", "澄清"),
         state.get("normalized_query", state["query"]),
     )
     return {
@@ -84,7 +91,7 @@ def action_agent(state: CustomerServiceState) -> dict[str, Any]:
     This is where the Step 8.5 Agent Loop belongs. The offline implementation
     limits itself to at most ``MAX_AGENT_LOOP_ITERATIONS`` function results.
     """
-    results = execute_business_action(state.get("intent", "faq"), state.get("slots", {}))
+    results = execute_business_action(state.get("intent", "澄清"), state.get("slots", {}))
     limited = results[: settings.max_agent_loop_iterations]
     return {
         "function_results": limited,
@@ -95,11 +102,11 @@ def action_agent(state: CustomerServiceState) -> dict[str, Any]:
 def hybrid_agent(state: CustomerServiceState) -> dict[str, Any]:
     """Hybrid Agent: run knowledge retrieval and business functions together."""
     knowledge = search_knowledge(
-        state.get("intent", "faq"),
+        state.get("intent", "澄清"),
         state.get("normalized_query", state["query"]),
     )
     function_results = execute_business_action(
-        state.get("intent", "faq"),
+        state.get("intent", "澄清"),
         state.get("slots", {}),
     )[: settings.max_agent_loop_iterations]
     return {

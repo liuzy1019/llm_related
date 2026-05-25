@@ -48,12 +48,16 @@ class DemoOrder:
     tags: list[str] = field(default_factory=list)
     events: list[str] = field(default_factory=list)
     rushed: bool = False
+    refund_ticket_id: str | None = None
 
 
 class MockCanteenDatabase:
     """Small repository that mimics the order-system boundary."""
 
     def __init__(self) -> None:
+        self.reset()
+
+    def reset(self) -> None:
         self._users: dict[str, DemoUser] = {
             "demo-user": DemoUser(
                 user_id="demo-user",
@@ -129,6 +133,7 @@ class MockCanteenDatabase:
                 events=["12:03 下单", "12:34 送达"],
             ),
         }
+        self._ticket_sequence = 1000
 
     def get_user(self, user_id: str) -> dict[str, Any] | None:
         user = self._users.get(user_id)
@@ -141,6 +146,10 @@ class MockCanteenDatabase:
     def list_demo_orders(self) -> list[dict[str, Any]]:
         return [asdict(deepcopy(order)) for order in self._orders.values()]
 
+    def upsert_demo_order(self, order: DemoOrder) -> None:
+        """Seed or replace one demo order for local verification and tests."""
+        self._orders[order.order_id] = deepcopy(order)
+
     def mark_rushed(self, order_id: str) -> dict[str, Any] | None:
         order = self._orders.get(order_id)
         if not order:
@@ -149,6 +158,38 @@ class MockCanteenDatabase:
         order.events.append("系统已发送催单提醒")
         return asdict(deepcopy(order))
 
+    def cancel_order(self, order_id: str) -> dict[str, Any] | None:
+        order = self._orders.get(order_id)
+        if not order or not order.cancelable:
+            return None
+        order.status = "canceled"
+        order.cancelable = False
+        order.refund_eligible = False
+        order.events.append("用户确认后系统已取消订单")
+        return asdict(deepcopy(order))
+
+    def submit_refund(self, order_id: str, reason: str) -> dict[str, Any] | None:
+        order = self._orders.get(order_id)
+        if not order or not order.refund_eligible:
+            return None
+        self._ticket_sequence += 1
+        ticket_id = f"TK{self._ticket_sequence}"
+        order.refund_ticket_id = ticket_id
+        order.events.append(f"用户确认后系统已提交退款申请，原因：{reason}")
+        return {
+            "ticket_id": ticket_id,
+            "order_id": order_id,
+            "type": "refund",
+            "reason": reason,
+            "status": "submitted",
+        }
+
+    def record_order_event(self, order_id: str, event: str) -> dict[str, Any] | None:
+        order = self._orders.get(order_id)
+        if not order:
+            return None
+        order.events.append(event)
+        return asdict(deepcopy(order))
+
 
 MOCK_DB = MockCanteenDatabase()
-

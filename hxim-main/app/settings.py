@@ -27,7 +27,7 @@ class Settings:
     max_agent_loop_iterations: int = int(os.getenv("MAX_AGENT_LOOP_ITERATIONS", "3"))
     default_user_id: str = os.getenv("DEFAULT_USER_ID", "demo-user")
     default_session_id: str = os.getenv("DEFAULT_SESSION_ID", "demo-session")
+    default_wm_poi_id: str = os.getenv("DEFAULT_WM_POI_ID", "100000")
 
 
 settings = Settings()
-

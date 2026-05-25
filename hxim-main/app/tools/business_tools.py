@@ -24,23 +24,21 @@ def _missing_order_id(slots: dict[str, Any]) -> dict[str, Any] | None:
 def execute_business_action(intent: str, slots: dict[str, Any]) -> list[dict[str, Any]]:
     """Execute one or more deterministic business actions for an intent."""
     results: list[dict[str, Any]] = []
-    if intent in {"delivery_inquiry", "order_rush"}:
+    if intent in {"配送", "催单"}:
         results.append(query_delivery_status(slots))
-        if intent == "order_rush":
+        if intent == "催单":
             results.append(rush_order(slots))
         return results
-    if intent == "order_cancel":
-        return [cancel_order(slots)]
-    if intent in {"refund_request", "wrong_item", "missing_item", "food_safety"}:
+    if intent in {"退款", "少送错送", "食安", "餐损撒漏", "餐品不符合预期"}:
+        if slots.get("requested_action") == "cancel_order":
+            return [cancel_order(slots)]
         results.append(query_order(slots))
-        if intent == "food_safety":
+        if intent == "食安":
             results.append(query_insurance_status(slots))
         results.append(submit_refund(slots))
         return results
-    if intent == "order_modify":
+    if intent in {"修改订单", "备注"}:
         return [modify_order(slots)]
-    if intent == "complaint":
-        return [submit_complaint(slots)]
     return [query_order(slots)]
 
 
@@ -169,6 +167,8 @@ def cancel_order(slots: dict[str, Any]) -> dict[str, Any]:
         "function": "cancel_order",
         "status": "needs_confirmation",
         "requires_confirmation": True,
+        "order_id": order["order_id"],
+        "confirmation_prompt": f"确认取消订单 {order['order_id']} 吗？",
         "message": f"取消订单 {order['order_id']} 属于变更操作，需要用户二次确认。",
     }
 
@@ -196,6 +196,8 @@ def submit_refund(slots: dict[str, Any]) -> dict[str, Any]:
         "function": "submit_refund",
         "status": "needs_confirmation",
         "requires_confirmation": True,
+        "order_id": order["order_id"],
+        "confirmation_prompt": f"确认提交订单 {order['order_id']} 的退款申请吗？",
         "message": (
             f"订单 {order['order_id']} 金额 {order['amount_yuan']} 元，"
             "退款申请会影响订单状态，需要用户确认后提交售后工单。"
@@ -219,6 +221,8 @@ def modify_order(slots: dict[str, Any]) -> dict[str, Any]:
         "function": "modify_order",
         "status": "needs_confirmation",
         "requires_confirmation": True,
+        "order_id": order["order_id"],
+        "confirmation_prompt": f"确认修改订单 {order['order_id']} 吗？",
         "message": f"订单 {order['order_id']} 修改前需要用户确认变更内容。",
     }
 
@@ -229,4 +233,61 @@ def submit_complaint(slots: dict[str, Any]) -> dict[str, Any]:
         "status": "needs_confirmation",
         "requires_confirmation": True,
         "message": "投诉工单需要用户确认诉求和联系方式后提交。",
+    }
+
+
+def commit_confirmed_mutation(mutation: dict[str, Any]) -> dict[str, Any]:
+    """Execute a previously confirmed mutating function in the mock database."""
+    function = mutation.get("function")
+    order_id = mutation.get("order_id") or (mutation.get("slots") or {}).get("order_id")
+    if function == "cancel_order":
+        order = MOCK_DB.cancel_order(str(order_id))
+        if not order:
+            return {
+                "function": function,
+                "status": "failed",
+                "order_id": order_id,
+                "message": f"订单 {order_id} 无法取消，请确认订单状态。",
+            }
+        return {
+            "function": function,
+            "status": "ok",
+            "order_id": order["order_id"],
+            "order": order,
+            "message": f"已为你取消订单 {order['order_id']}，订单状态已更新为 canceled。",
+        }
+    if function == "submit_refund":
+        ticket = MOCK_DB.submit_refund(str(order_id), mutation.get("intent", "退款"))
+        if not ticket:
+            return {
+                "function": function,
+                "status": "failed",
+                "order_id": order_id,
+                "message": f"订单 {order_id} 暂时无法提交退款申请。",
+            }
+        return {
+            "function": function,
+            "status": "ok",
+            "order_id": order_id,
+            "ticket": ticket,
+            "message": f"已提交退款申请，工单号 {ticket['ticket_id']}。",
+        }
+    if function == "modify_order":
+        order = MOCK_DB.record_order_event(str(order_id), "用户已确认修改订单，等待人工核验变更内容")
+        return {
+            "function": function,
+            "status": "ok" if order else "failed",
+            "order_id": order_id,
+            "order": order,
+            "message": (
+                f"已记录订单 {order_id} 的修改确认，稍后按变更内容处理。"
+                if order
+                else f"订单 {order_id} 暂时无法修改。"
+            ),
+        }
+    return {
+        "function": function or "unknown_mutation",
+        "status": "failed",
+        "order_id": order_id,
+        "message": "当前确认操作暂不支持执行。",
     }

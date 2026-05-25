@@ -7,11 +7,10 @@ import time
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
-from app.agents import build_customer_service_graph
 from app.data import MOCK_DB
+from app.service import CHAT_SERVICE
 from app.settings import settings
 
-graph = build_customer_service_graph().compile()
 app = FastAPI(title=settings.app_name)
 
 
@@ -28,20 +27,17 @@ class ChatResponse(BaseModel):
     escalate: bool
     latency_ms: float
     trace: list[str]
+    session: dict
+    autoeval: dict
+    board_record: dict
+    annotation_record: dict
+    evaluation_meta: dict
 
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest) -> ChatResponse:
     start = time.perf_counter()
-    result = graph.invoke(
-        {
-            "query": req.query,
-            "session_id": req.session_id,
-            "user_id": req.user_id,
-            "iteration_count": 0,
-        },
-        config={"configurable": {"thread_id": req.session_id}},
-    )
+    result = CHAT_SERVICE.chat(req.query, req.session_id, req.user_id)
     return ChatResponse(
         reply=result["reply"],
         intent=result["intent"],
@@ -49,6 +45,11 @@ async def chat(req: ChatRequest) -> ChatResponse:
         escalate=result.get("escalate", False),
         latency_ms=(time.perf_counter() - start) * 1000,
         trace=result.get("trace", []),
+        session=result.get("session", {}),
+        autoeval=result.get("autoeval", {}),
+        board_record=result.get("board_record", {}),
+        annotation_record=result.get("annotation_record", {}),
+        evaluation_meta=result.get("evaluation_meta", {}),
     )
 
 
@@ -56,3 +57,9 @@ async def chat(req: ChatRequest) -> ChatResponse:
 async def list_demo_orders() -> list[dict]:
     """Expose demo orders for presentations and quick manual testing."""
     return MOCK_DB.list_demo_orders()
+
+
+@app.post("/reset/{session_id}")
+async def reset_session(session_id: str) -> dict[str, str]:
+    """Reset one demo conversation session."""
+    return CHAT_SERVICE.reset(session_id)

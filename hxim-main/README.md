@@ -19,11 +19,14 @@
 hxim-main/
 ├── app/
 │   ├── agents/customer_service_graph.py
+│   ├── data/mock_database.py
 │   ├── domain/catalog.py
 │   ├── domain/heuristics.py
 │   ├── state/schemas.py
 │   ├── tools/business_tools.py
 │   ├── api.py
+│   ├── service.py
+│   ├── session_store.py
 │   └── settings.py
 ├── docs/ARCHITECTURE.md
 ├── docs/ROADMAP.md
@@ -55,6 +58,34 @@ python scripts/run_chat.py --query "订单123456吃出所料了，我要投诉"
 python scripts/run_chat.py --query "取消订单888888"
 ```
 
+连续对话模式：
+
+```bash
+python scripts/run_chat.py --interactive --session-id demo-v12
+```
+
+可试：
+
+```text
+我要退款
+778899
+确认
+```
+
+二次确认闭环：
+
+```text
+取消订单888888
+确认
+```
+
+取消待确认操作：
+
+```text
+取消订单888888
+取消
+```
+
 启动 API：
 
 ```bash
@@ -67,6 +98,12 @@ uvicorn app.api:app --reload --port 8000
 curl -X POST http://127.0.0.1:8000/chat \
   -H 'Content-Type: application/json' \
   -d '{"query":"我的订单123456到哪了，帮我催一下"}'
+```
+
+重置会话：
+
+```bash
+curl -X POST http://127.0.0.1:8000/reset/demo-session
 ```
 
 Demo 订单：
@@ -82,8 +119,10 @@ API 启动后可访问 `GET /demo/orders` 查看模拟订单数据。
 ## 测试
 
 ```bash
-pytest -q
+.venv/bin/python -m pytest -q tests
 ```
+
+当前测试覆盖单轮图、业务函数和更接近真实 IM 的多轮会话流，包括 session 隔离、reset、食品安全中断、完成后继续问答，以及 v1.2 的确认/取消闭环。
 
 ## 后续替换点
 

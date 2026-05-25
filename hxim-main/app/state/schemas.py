@@ -18,6 +18,8 @@ class CustomerServiceState(TypedDict, total=False):
     session_id: str
     user_id: str
 
+    carried_intent: str | None
+    carried_slots: dict[str, Any]
     normalized_query: str
     memory_snapshot: dict[str, Any]
 
@@ -37,4 +39,3 @@ class CustomerServiceState(TypedDict, total=False):
     memory_updates: dict[str, Any]
     trace: Annotated[list[str], operator.add]
     iteration_count: int
-
