@@ -21,7 +21,7 @@ git status --short
 
 - 只包含本次发布相关文件。
 - 不包含 token、账号密码、`.env`、`*_git.md`、`.venv/`、`.pytest_cache/`。
-- 不混入 `langgraph-scaffold`、`hx_im` 或其它无关目录改动。
+- 不混入 `langgraph-scaffold`、原始方案资料或其它无关目录改动。
 
 运行测试：
 
@@ -106,4 +106,3 @@ git status --short --branch
   git status --short
   ```
   确认没有 `*_git.md`、`.env`、`token`、`secret` 类文件进入暂存区。
-

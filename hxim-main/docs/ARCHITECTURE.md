@@ -2,10 +2,10 @@
 
 ## 来源映射
 
-本项目综合了两份 `hx_im` 设计文档：
+本项目抽象自食堂外卖 IM 客服场景的两类设计输入：
 
-- `客服agentv1.html`：当前/增强版 13 步 Pipeline 设计。
-- `食堂外卖智能客服系统开发方案.html`：Hybrid Coordinator + LangGraph 演进方案。
+- 多步骤客服 Pipeline：覆盖记忆召回、文本纠错、意图识别、阶段判断、情感识别、转人工、槽位提取、RAG、函数执行、回复生成和事实提取。
+- Hybrid Coordinator 架构：将规则路由、知识检索、业务动作和回复生成拆成可替换的 LangGraph 节点。
 
 ## Pipeline 到 Agent 的映射
 
