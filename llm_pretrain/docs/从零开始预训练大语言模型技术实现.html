@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>一文了解从零开始预训练大语言模型技术实现</title>
+<style>
+  :root {
+    --fg: #1f2328;
+    --muted: #57606a;
+    --bg: #ffffff;
+    --bg-soft: #f6f8fa;
+    --border: #d0d7de;
+    --accent: #0969da;
+    --code-bg: #f6f8fa;
+    --kbd-bg: #f6f8fa;
+    --warn: #fff8c5;
+    --warn-border: #d4a72c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fg: #e6edf3;
+      --muted: #8b949e;
+      --bg: #0d1117;
+      --bg-soft: #161b22;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --code-bg: #161b22;
+      --kbd-bg: #161b22;
+      --warn: #3d2e04;
+      --warn-border: #d29922;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Microsoft YaHei", Helvetica, Arial, sans-serif;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+  .wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 28px 80px;
+  }
+  h1 { font-size: 30px; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-top: 0; }
+  h2 { font-size: 24px; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-top: 42px; }
+  h3 { font-size: 19px; margin-top: 30px; }
+  h4 { font-size: 16px; margin-top: 24px; }
+  p { margin: 12px 0; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  ul, ol { padding-left: 1.6em; }
+  li { margin: 4px 0; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+  blockquote {
+    margin: 16px 0;
+    padding: 8px 16px;
+    background: var(--bg-soft);
+    border-left: 4px solid var(--accent);
+    color: var(--muted);
+    border-radius: 0 6px 6px 0;
+  }
+  code {
+    font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.92em;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  pre code { background: none; padding: 0; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: var(--bg-soft); }
+  .meta {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .meta b { color: var(--fg); }
+  .checklist li { list-style: none; position: relative; padding-left: 26px; }
+  .checklist li::before {
+    content: "☐";
+    position: absolute; left: 0; color: var(--accent); font-weight: bold;
+  }
+  .toc {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 22px;
+    margin: 20px 0 28px;
+  }
+  .toc ol { margin: 4px 0; padding-left: 1.4em; }
+  .footer {
+    margin-top: 60px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>一文了解从零开始预训练大语言模型技术实现</h1>
+
+<div class="meta">
+  <p><b>原文</b>：<a href="https://km.woa.com/articles/show/660614?jumpfrom=kmmcp" target="_blank">KM #660614 — 一文了解从零开始预训练大语言模型技术实现</a></p>
+  <p><b>作者</b>：feelingzhou ｜ <b>所属 K 吧</b>：<a href="https://km.woa.com/group/24938?jumpfrom=kmmcp" target="_blank">#24938 WXG 技术能力提升</a></p>
+  <p><b>发布 / 更新时间</b>：2026-05-18 10:59 / 2026-05-18 22:03</p>
+  <p><b>标签</b>：算法 ｜ 机器学习 ｜ LLM ｜ 大模型 ｜ 微信支付</p>
+  <p><b>整理时间</b>：2026-05-25（由 KM MCP 拉取并结构化整理）</p>
+</div>
+
+<div class="toc">
+  <b>目录</b>
+  <ol>
+    <li><a href="#sec-0">文章导读</a></li>
+    <li><a href="#sec-1">整体训练流程</a></li>
+    <li><a href="#sec-2">网络结构：从 2017 原始 Transformer 到 2023+ 现代 LLM</a></li>
+    <li><a href="#sec-3">数据准备</a></li>
+    <li><a href="#sec-4">Tokenizer 训练（Byte-level BPE，词表 64000）</a></li>
+    <li><a href="#sec-5">预训练框架选型</a></li>
+    <li><a href="#sec-6">7B 模型预训练（Megatron-LM，8×H20）</a></li>
+    <li><a href="#sec-7">Megatron → HuggingFace 格式转换</a></li>
+    <li><a href="#sec-8">SFT 指令微调（Verl 0.8.0 + FSDP）</a></li>
+    <li><a href="#sec-9">总结 &amp; 局限</a></li>
+    <li><a href="#sec-A">附录 A：本地复现路线图</a></li>
+    <li><a href="#sec-B">附录 B：硬件最小可行配置参考</a></li>
+  </ol>
+</div>
+
+<h2 id="sec-0">0. 文章导读</h2>
+<p>本文是一篇<b>可操作的科普性实践指南</b>，目标是从 0 复现一个 <b>7B 类 LLaMA 大模型</b> 的「预训练 + SFT」全链路：</p>
+<ul>
+  <li><b>硬件</b>：单机 8 × H20</li>
+  <li><b>预训练框架</b>：Megatron-LM</li>
+  <li><b>后训练框架</b>：Verl（0.8.0） / Nemo-RL</li>
+  <li><b>语料</b>：魔搭社区公开预训练 / SFT 语料（作者强调：真实工程中<b>数据才是最核心的环节</b>，本文做了简化）</li>
+  <li><b>算力可扩展性</b>：脚本可平滑扩展到百亿、千亿级参数</li>
+</ul>
+
+<h2 id="sec-1">1. 整体训练流程</h2>
+<p>要从零训练一个大语言模型（LLM），主流阶段：</p>
+<pre><code>语料收集
+  └─► Tokenizer 训练
+        └─► 预训练 (Pre-training)
+              └─► 指令微调 (SFT)
+                    └─► 强化学习对齐 (DPO / PPO / GRPO …)
+                          └─► 评估 &amp; 线上部署</code></pre>
+<blockquote>本文覆盖前 4 步；DPO/PPO 因公开语料不足未做（作者上一篇文章里有算法实现）。</blockquote>
+
+<h2 id="sec-2">2. 网络结构：从 2017 原始 Transformer 到 2023+ 现代 LLM</h2>
+<p>文中选取 <b>Decoder-only Transformer</b> 架构（与 LLaMA / Qwen / DeepSeek 等主流一致），并对比了与 2017 原始 Transformer 的主要差异：</p>
+<table>
+  <thead>
+    <tr><th>模块</th><th>原始 Transformer (2017)</th><th>现代 LLM (2023+)</th><th>变化原因</th><th>代表模型</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>位置编码</td><td>Sinusoidal Absolute PE</td><td><b>RoPE</b></td><td>旋转矩阵注入 Q/K，原生支持相对位置，可通过 NTK-aware / YaRN 无损外推</td><td>LLaMA、Qwen、DeepSeek、Mistral</td></tr>
+    <tr><td>注意力机制</td><td>MHA（每头独立 QKV）</td><td><b>GQA / MLA</b></td><td>大幅降低 KV-Cache，推理更省显存</td><td>LLaMA-3、DeepSeek-V2</td></tr>
+    <tr><td>归一化</td><td>LayerNorm</td><td><b>RMSNorm</b></td><td>计算更省，效果几乎无损</td><td>LLaMA 系列</td></tr>
+    <tr><td>激活函数</td><td>ReLU / GeLU</td><td><b>SwiGLU</b></td><td>表达能力更强</td><td>LLaMA、PaLM</td></tr>
+    <tr><td>训练精度</td><td>FP32</td><td><b>BF16</b></td><td>数值范围大、训练更稳，省显存</td><td>绝大多数 LLM</td></tr>
+    <tr><td>稀疏化</td><td>Dense FFN</td><td><b>MoE</b></td><td>同算力下扩参数，提升能力上限</td><td>Mixtral、DeepSeek-MoE</td></tr>
+    <tr><td>Bias</td><td>含 bias</td><td><b>无 bias</b></td><td>略微降参数、提升稳定性</td><td>LLaMA</td></tr>
+    <tr><td>Attention 内核</td><td>naive</td><td><b>FlashAttention</b></td><td>IO-aware，显著加速并省显存</td><td>通用</td></tr>
+  </tbody>
+</table>
+
+<h2 id="sec-3">3. 数据准备</h2>
+<ul>
+  <li><b>数据来源</b>：魔搭社区（ModelScope）公开预训练语料 + SFT 对话语料。</li>
+  <li><b>预处理</b>：用 Megatron-LM 自带的 <code>tools/preprocess_data.py</code> 将 JSON 转为 <code>.bin / .idx</code> 二进制格式以喂入训练。</li>
+  <li><b>真实工程提示</b>：作者反复强调，数据清洗 / 去重 / 配比 / 质量打分才是预训练最核心的部分，本文做了简化。</li>
+</ul>
+
+<h2 id="sec-4">4. Tokenizer 训练（Byte-level BPE，词表 64000）</h2>
+<p><b>为什么选 Byte-level BPE</b>：</p>
+<ul>
+  <li>无 <code>UNK</code>，对任意字节都能编码；</li>
+  <li>多语言友好（中英混合不掉字）；</li>
+  <li>生态兼容好（HF / Megatron / vLLM / SGLang 通吃）。</li>
+</ul>
+
+<p>最小可运行示例（依赖 <code>tokenizers</code>）：</p>
+<pre><code>from tokenizers import Tokenizer, models, trainers, pre_tokenizers, decoders
+
+tokenizer = Tokenizer(models.BPE())
+tokenizer.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=False)
+tokenizer.decoder = decoders.ByteLevel()
+
+trainer = trainers.BpeTrainer(
+    vocab_size=64000,
+    special_tokens=["&lt;|endoftext|&gt;", "&lt;|pad|&gt;", "&lt;|im_start|&gt;", "&lt;|im_end|&gt;"],
+    initial_alphabet=pre_tokenizers.ByteLevel.alphabet(),
+)
+
+tokenizer.train(files=["corpus/part-0001.txt", "corpus/part-0002.txt"], trainer=trainer)
+tokenizer.save("tokenizer/tokenizer.json")
+</code></pre>
+<blockquote>训出来后可以直接放进 Megatron-LM，框架原生支持 HuggingFace Tokenizer。</blockquote>
+
+<h2 id="sec-5">5. 预训练框架选型</h2>
+<table>
+  <thead>
+    <tr><th>框架</th><th>吞吐</th><th>显存效率</th><th>稳定性</th><th>并行策略</th><th>备注</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><b>Megatron-LM</b> ✅</td><td>★★★★★</td><td>★★★★★</td><td>★★★★★</td><td>TP/PP/DP/SP/EP/CP</td><td>本文选择</td></tr>
+    <tr><td>DeepSpeed</td><td>★★★★</td><td>★★★★</td><td>★★★★</td><td>ZeRO-1/2/3</td><td>上手快，超大规模略弱</td></tr>
+    <tr><td>FSDP</td><td>★★★</td><td>★★★★</td><td>★★★</td><td>Sharded DP</td><td>工程简洁，吞吐略低</td></tr>
+    <tr><td>Nanotron</td><td>★★★</td><td>★★★</td><td>★★★</td><td>TP/PP/DP</td><td>HF 出的新框架，生态尚浅</td></tr>
+  </tbody>
+</table>
+<p><b>结论</b>：大规模预训练首选 Megatron-LM，本文据此搭建。</p>
+
+<h2 id="sec-6">6. 7B 模型预训练（Megatron-LM，8×H20）</h2>
+<h3>6.1 模型超参（类 LLaMA-7B）</h3>
+<table>
+  <thead><tr><th>超参</th><th>值</th></tr></thead>
+  <tbody>
+    <tr><td>层数（num_layers）</td><td>32</td></tr>
+    <tr><td>隐层大小（hidden_size）</td><td>4096</td></tr>
+    <tr><td>注意力头数（num_attention_heads）</td><td>32</td></tr>
+    <tr><td>FFN 倍数（ffn_hidden_size）</td><td>11008（SwiGLU）</td></tr>
+    <tr><td>激活函数</td><td><b>SwiGLU</b></td></tr>
+    <tr><td>位置编码</td><td><b>RoPE</b></td></tr>
+    <tr><td>Norm</td><td><b>RMSNorm</b></td></tr>
+    <tr><td>Bias</td><td><b>无</b></td></tr>
+    <tr><td>注意力内核</td><td><b>FlashAttention</b></td></tr>
+    <tr><td>精度</td><td><b>BF16</b></td></tr>
+    <tr><td>序列长度</td><td>4096</td></tr>
+    <tr><td>词表大小</td><td>64000</td></tr>
+  </tbody>
+</table>
+
+<h3>6.2 预训练启动脚本骨架（关键 flag）</h3>
+<pre><code>torchrun --nproc_per_node=8 pretrain_gpt.py \
+  --num-layers 32 \
+  --hidden-size 4096 \
+  --num-attention-heads 32 \
+  --ffn-hidden-size 11008 \
+  --seq-length 4096 \
+  --max-position-embeddings 4096 \
+  --tokenizer-type HuggingFaceTokenizer \
+  --tokenizer-model ./tokenizer/tokenizer.json \
+  --position-embedding-type rope \
+  --normalization RMSNorm \
+  --swiglu \
+  --untie-embeddings-and-output-weights \
+  --disable-bias-linear \
+  --use-flash-attn \
+  --bf16 \
+  --tensor-model-parallel-size 2 \
+  --pipeline-model-parallel-size 1 \
+  --micro-batch-size 1 \
+  --global-batch-size 256 \
+  --train-iters 50000 \
+  --lr 3e-4 --min-lr 3e-5 --lr-decay-style cosine --lr-warmup-iters 2000 \
+  --weight-decay 0.1 --clip-grad 1.0 \
+  --data-path ./data/megatron_pretrain_text_document \
+  --save ./checkpoints/pretrain --load ./checkpoints/pretrain \
+  --save-interval 1000 --eval-interval 500
+</code></pre>
+
+<h3>6.3 训练监控</h3>
+<ul>
+  <li><b>GPU 利用率</b>：稳定 90%+ 视为健康；</li>
+  <li><b>Loss 曲线</b>：典型预训练 loss 从 ~10 快速下降到 2~3 区间，然后缓慢下降；</li>
+  <li><b>吞吐</b>：Megatron-LM 通常能跑到接近理论峰值的 50%+ MFU。</li>
+</ul>
+
+<h2 id="sec-7">7. Megatron → HuggingFace 格式转换</h2>
+<p>Megatron 的 DistCP 分布式检查点不能被 HF / vLLM 直接加载，需要转格式。作者自写 <code>saver_hf.py</code>，要点：</p>
+<ol>
+  <li><b>拆分融合的 QKV 权重</b>：Megatron 把 <code>q_proj / k_proj / v_proj</code> 拼成一个大矩阵存储，转 HF 时要按 head 维拆开（注意 GQA/MQA 下 K、V 的分组）；</li>
+  <li><b>拆分 SwiGLU 的 Gate / Up 投影</b>：Megatron 将 <code>gate_proj</code> 与 <code>up_proj</code> 合并存储，转 HF 时拆为两个 Linear；</li>
+  <li><b>重命名权重 key</b>：<code>language_model.encoder.layers.x.*</code> → <code>model.layers.x.*</code>；</li>
+  <li><b>写出 <code>config.json</code> / <code>generation_config.json</code></b>：填入 LLaMA 标准字段（<code>hidden_act=silu</code>、<code>rms_norm_eps</code>、<code>rope_theta</code> 等）。</li>
+</ol>
+
+<h3>7.1 基座模型测试（预期表现）</h3>
+<p>预训练 base 模型可以<b>续写</b>，但<b>不能直接答问</b>：</p>
+<ul>
+  <li>✅ 输入"床前明月光，" → 输出"疑是地上霜。举头望明月，低头思故乡。"</li>
+  <li>❌ 输入"马云是谁？" → 输出乱续写，不会真正回答。</li>
+</ul>
+<p>这是 base 模型的正常表现，必须经过 SFT 才能"对话"。</p>
+
+<h2 id="sec-8">8. SFT 指令微调（Verl 0.8.0 + FSDP）</h2>
+<h3>8.1 训练脚本</h3>
+<pre><code>PROJECT_DIR=/ceph_xx/xxx/feelingzhou/verltrain
+DATA_DIR=${PROJECT_DIR}/verl_full_sft/data
+TRAIN_FILE=${DATA_DIR}/train.parquet
+VAL_FILE=${DATA_DIR}/test.parquet
+MODEL_PATH=/ceph_xx/xxx/feelingzhou/megatron/mbridge_model
+OUTPUT_DIR=${PROJECT_DIR}/verl_full_sft/checkpoints
+mkdir -p ${OUTPUT_DIR}
+
+# ---- batch / step ----
+TRAIN_BATCH_SIZE=256
+MICRO_BATCH_SIZE_PER_GPU=2
+MAX_LENGTH=1024
+TOTAL_EPOCHS=2
+SAVE_FREQ=500
+TEST_FREQ=50
+# ---- optim ----
+LR=1e-5
+WARMUP_RATIO=0.03
+LR_SCHEDULER=cosine
+
+torchrun --nnodes=1 --nproc_per_node=8 \
+  -m verl.trainer.sft_trainer \
+  data.train_files=${TRAIN_FILE} \
+  data.val_files=${VAL_FILE} \
+  data.train_batch_size=${TRAIN_BATCH_SIZE} \
+  data.micro_batch_size_per_gpu=${MICRO_BATCH_SIZE_PER_GPU} \
+  data.max_length=${MAX_LENGTH} \
+  data.messages_key=messages \
+  data.ignore_input_ids_mismatch=True \
+  data.truncation=right \
+  engine=fsdp \
+  model.path=${MODEL_PATH} \
+  model.trust_remote_code=True \
+  model.use_remove_padding=True \
+  model.enable_gradient_checkpointing=True \
+  optim.lr=${LR} \
+  optim.weight_decay=0.01 \
+  optim.lr_warmup_steps_ratio=${WARMUP_RATIO} \
+  optim.lr_scheduler_type=${LR_SCHEDULER} \
+  optim.clip_grad=1.0 \
+  checkpoint.save_contents=['model','hf_model'] \
+  trainer.total_epochs=${TOTAL_EPOCHS} \
+  trainer.test_freq=${TEST_FREQ} \
+  trainer.save_freq=${SAVE_FREQ} \
+  trainer.project_name="self-model-7b-sft" \
+  trainer.experiment_name="self-model-7b-sft" \
+  trainer.default_local_dir=${OUTPUT_DIR} \
+  trainer.n_gpus_per_node=8 \
+  trainer.nnodes=1 \
+  trainer.logger=['console','tensorboard'] \
+  trainer.max_ckpt_to_keep=3 \
+  trainer.total_training_steps=10000
+</code></pre>
+
+<h3>8.2 SFT 后 checkpoint 合并为 HF 格式</h3>
+<pre><code>python3 -m verl.model_merger merge \
+  --backend fsdp \
+  --local_dir /ceph_xx/xxx/feelingzhou/verltrain/checkpoints/global_step_129/actor \
+  --target_dir /ceph_xx/xxx/feelingzhou/verltrain/checkpoints/hf_step129
+</code></pre>
+
+<h3>8.3 SFT 后测试效果</h3>
+<ul>
+  <li>✅ "马云是谁？" → 能给出"阿里巴巴创始人..."的结构化回答；</li>
+  <li>✅ "介绍下广东省深圳市" → 能从地理 / 经济 / 文化等多维度作答；</li>
+  <li>证明 SFT 让模型从「续写器」进化到「对话助手」。</li>
+</ul>
+
+<h2 id="sec-9">9. 总结 &amp; 局限</h2>
+<ul>
+  <li><b>完成</b>：Tokenizer 训练 → 7B 预训练 → 格式转换 → SFT 全链路打通；</li>
+  <li><b>未做</b>：CoT 数据合成、DPO、PPO、GRPO 等 RLHF 类训练（缺合适语料）；</li>
+  <li><b>真实工程缺口</b>：本文最大的简化是<b>数据</b>，工业级 LLM 训练 80% 工作量在数据。</li>
+</ul>
+<blockquote>原文链接：<a href="https://km.woa.com/articles/show/660614?jumpfrom=kmmcp" target="_blank">https://km.woa.com/articles/show/660614?jumpfrom=kmmcp</a></blockquote>
+
+<h2 id="sec-A">附录 A：本地复现路线图（基于本项目目录）</h2>
+<pre><code>llm-from-scratch-7b/
+├── docs/                         # ← 当前文档所在
+├── data/                         # 原始 + 预处理后语料
+├── tokenizer/                    # BPE 训练与产物
+├── pretrain/                     # Megatron-LM 预训练脚本
+├── convert_hf/                   # Megatron → HF 格式转换
+├── sft/                          # Verl SFT 脚本
+└── scripts/                      # 一键拉起 / 监控 / 评测
+</code></pre>
+
+<p><b>最小复现里程碑</b>（建议按顺序打勾）：</p>
+<ul class="checklist">
+  <li><b>M0 环境</b>：CUDA 12.x / PyTorch 2.3+ / Megatron-LM / Verl / tokenizers / transformers</li>
+  <li><b>M1 数据</b>：从魔搭拉取预训练 + SFT 语料，跑 <code>tools/preprocess_data.py</code></li>
+  <li><b>M2 Tokenizer</b>：训练 64000 词表的 Byte-level BPE</li>
+  <li><b>M3 预训练</b>：跑通 Megatron-LM 7B 启动脚本，观察 loss 曲线 &amp; MFU</li>
+  <li><b>M4 转 HF</b>：跑 <code>saver_hf.py</code>，用 HF <code>from_pretrained</code> 加载验证</li>
+  <li><b>M5 SFT</b>：用 Verl 跑 SFT，合并出 HF 格式 checkpoint</li>
+  <li><b>M6 评测</b>：对比 base 与 SFT 模型的对话表现，跑 MMLU/C-Eval 子集</li>
+</ul>
+
+<h2 id="sec-B">附录 B：硬件最小可行配置参考</h2>
+<table>
+  <thead><tr><th>阶段</th><th>最低配置</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>Tokenizer 训练</td><td>CPU 单机即可</td><td>数十 GB 语料约数小时</td></tr>
+    <tr><td>7B 预训练（玩具）</td><td>8 × A100 80G 或 8 × H20</td><td>仅 demo，loss 能下降，token 量级 1~10B</td></tr>
+    <tr><td>7B 预训练（可用）</td><td>32 × H100 / H800</td><td>需要 100B~1T tokens 才能出可用基座</td></tr>
+    <tr><td>7B SFT</td><td>8 × A100 80G</td><td>FSDP 可跑，FP/BF16</td></tr>
+    <tr><td>推理验证</td><td>1 × 24G 显存（4-bit 量化）</td><td>用 vLLM / llama.cpp 即可</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">
+  整理：基于 KM MCP <code>show-article</code> 接口拉取 + 结构化重排<br/>
+  数据来源：KM 文章 <a href="https://km.woa.com/articles/show/660614?jumpfrom=kmmcp" target="_blank">#660614</a><br/>
+  整理时间：2026-05-25 12:08
+</div>
+
+</div>
+</body>
+</html>
