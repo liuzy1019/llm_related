@@ -16,6 +16,7 @@
 | 2026-05-21 | 工程规范 | 新增 `docs/RELEASE_PROCESS.md`，明确每日发版、测试、tag、推送、回滚和安全规则；补充 `.gitignore` 的 token/secret/`*_git.md` 忽略规则。 | `.venv/bin/python -m pytest -q tests` 通过，9 passed。 | 覆盖度不变，工程流程风险降低。 | 后续补 CI、CHANGELOG、PR/Issue 模板。 |
 | 2026-05-22 | `v1.1` 开发 | 新增 session-aware `ChatService`、进程内 `SessionStore`、`POST /reset/{session_id}`、CLI `--interactive`；支持“我要退款”->“778899”和“帮我催单”->“123456”的缺槽位续接；新增真实会话流测试，并修复食品安全/投诉等高优先级新意图被 pending intent 误吞的问题。 | `.venv/bin/python -m pytest -q tests` 通过，17 passed；覆盖多轮、session 隔离、reset、食品安全中断、完成后继续问答。 | 约 48%，已具备 demo 级多轮会话能力。 | `v1.2`：二次确认闭环，用户说“确认/取消”后继续执行或取消 pending mutation。 |
 | 2026-05-25 | `v1.2` 开发 | 按变更类动作二次确认流程实现 pending mutation；取消订单、退款申请等变更类函数先进入待确认状态，用户说“确认”后提交 mock 操作，说“取消”后终止；mock DB 记录取消/退款事件，并补充测试隔离 reset。 | `.venv/bin/python -m pytest -q tests` 通过，19 passed；`.venv/bin/python -m compileall -q app scripts tests database` 通过。 | 约 52%，已具备 demo 级多轮 + 二次确认闭环。 | `v1.3`：声明式配置，将意图、函数、SOP 元数据抽到 JSON。 |
+| 2026-05-26 | `v1.3` 开发 | 新增 `app/configs/intents.json`、`functions.json`、`sop.json` 和 `config_loader.py`；Router 从配置读取意图关键词、置信度、阶段和路由；Action 编排从配置读取意图到函数序列；Generator 基础提示文案从 SOP 配置读取；补充配置加载和动作序列回归测试。 | `.venv/bin/python -m pytest -q tests` 通过，28 passed。 | 约 57%，已具备 demo 级声明式配置层，新增意图/函数/SOP 文案可优先改配置。 | `v1.4`：工单系统，退款、投诉、食品安全场景生成可查询 ticket。 |
 
 ## 维护规则
 

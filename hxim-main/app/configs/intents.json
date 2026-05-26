@@ -1,0 +1,136 @@
+{
+  "default_intent": "澄清",
+  "default_confidence": 0.62,
+  "intents": [
+    {
+      "name": "转人工",
+      "stage": "general",
+      "route": "ESCALATE",
+      "confidence": 0.96,
+      "keywords": ["人工", "真人", "客服"]
+    },
+    {
+      "name": "食安",
+      "stage": "after_sale",
+      "route": "HYBRID",
+      "confidence": 0.94,
+      "keywords": ["塑料", "异物", "吃坏", "肚子疼", "过期", "变质", "虫子"]
+    },
+    {
+      "name": "少送错送",
+      "stage": "after_sale",
+      "route": "HYBRID",
+      "confidence": 0.9,
+      "keywords": ["漏发", "少送", "没给", "送错", "错发", "少了一份"]
+    },
+    {
+      "name": "餐损撒漏",
+      "stage": "after_sale",
+      "route": "HYBRID",
+      "confidence": 0.89,
+      "keywords": ["洒了", "撒了", "漏了", "外溢", "包装破", "包装坏", "汤洒"]
+    },
+    {
+      "name": "餐品不符合预期",
+      "stage": "after_sale",
+      "route": "HYBRID",
+      "confidence": 0.88,
+      "keywords": ["太咸", "太淡", "凉了", "不热", "难吃", "分量少", "不好吃"]
+    },
+    {
+      "name": "退款",
+      "stage": "after_sale",
+      "route": "HYBRID",
+      "confidence": 0.9,
+      "keywords": ["退款", "退钱", "售后", "取消订单", "不要了", "取消"]
+    },
+    {
+      "name": "催单",
+      "stage": "sale",
+      "route": "ACTION",
+      "requires_order_id_for_route": true,
+      "missing_order_route": "HYBRID",
+      "confidence": 0.87,
+      "keywords": ["催单", "催一下", "快点", "还没送到", "怎么还没", "什么时候到", "多久到", "到哪"]
+    },
+    {
+      "name": "配送",
+      "stage": "sale",
+      "route": "ACTION",
+      "requires_order_id_for_route": true,
+      "missing_order_route": "HYBRID",
+      "confidence": 0.86,
+      "keywords": ["放门口", "放柜子", "别放", "不要放", "送到", "骑手", "配送", "注意安全"]
+    },
+    {
+      "name": "修改订单",
+      "stage": "sale",
+      "route": "HYBRID",
+      "confidence": 0.84,
+      "keywords": ["改地址", "修改订单", "换商品", "更换商品", "改电话"]
+    },
+    {
+      "name": "备注",
+      "stage": "sale",
+      "route": "HYBRID",
+      "confidence": 0.84,
+      "keywords": ["不要辣", "加辣", "少辣", "不辣", "不要香菜", "多放", "少放", "备注"]
+    },
+    {
+      "name": "发票",
+      "stage": "presale",
+      "route": "KNOWLEDGE",
+      "confidence": 0.83,
+      "keywords": ["发票", "抬头", "税号"]
+    },
+    {
+      "name": "团餐",
+      "stage": "presale",
+      "route": "KNOWLEDGE",
+      "confidence": 0.83,
+      "keywords": ["团餐", "公司订餐", "大额订单", "50份", "二十份", "20份", "十份", "10份"]
+    },
+    {
+      "name": "赠品",
+      "stage": "presale",
+      "route": "KNOWLEDGE",
+      "confidence": 0.82,
+      "keywords": ["送个", "赠品", "免费送", "能送"]
+    },
+    {
+      "name": "优惠",
+      "stage": "presale",
+      "route": "KNOWLEDGE",
+      "confidence": 0.82,
+      "keywords": ["多少钱", "价格", "优惠", "折扣", "满减", "券", "会员"]
+    },
+    {
+      "name": "商品",
+      "stage": "presale",
+      "route": "KNOWLEDGE",
+      "confidence": 0.82,
+      "keywords": ["有什么菜", "推荐", "口味", "辣不辣", "菜单", "原料", "售罄", "补货"]
+    },
+    {
+      "name": "门店",
+      "stage": "presale",
+      "route": "KNOWLEDGE",
+      "confidence": 0.8,
+      "keywords": ["几点", "营业", "开门", "地址", "在哪", "电话", "预定", "浣熊食堂"]
+    },
+    {
+      "name": "闲聊",
+      "stage": "general",
+      "route": "CHITCHAT",
+      "confidence": 0.75,
+      "keywords": ["你好", "您好", "hello", "谢谢", "辛苦了"]
+    },
+    {
+      "name": "澄清",
+      "stage": "presale",
+      "route": "KNOWLEDGE",
+      "confidence": 0.62,
+      "keywords": []
+    }
+  ]
+}

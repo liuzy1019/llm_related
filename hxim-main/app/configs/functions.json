@@ -1,0 +1,60 @@
+{
+  "default_actions": ["query_order"],
+  "action_sequences": {
+    "配送": ["query_delivery_status"],
+    "催单": ["query_delivery_status", "rush_order"],
+    "退款": ["query_order", "submit_refund"],
+    "少送错送": ["query_order", "submit_refund"],
+    "食安": ["query_order", "query_insurance_status", "submit_refund"],
+    "餐损撒漏": ["query_order", "submit_refund"],
+    "餐品不符合预期": ["query_order", "submit_refund"],
+    "修改订单": ["modify_order"],
+    "备注": ["modify_order"]
+  },
+  "slot_overrides": [
+    {
+      "slot": "requested_action",
+      "value": "cancel_order",
+      "intents": ["退款", "少送错送", "食安", "餐损撒漏", "餐品不符合预期"],
+      "actions": ["cancel_order"]
+    }
+  ],
+  "functions": {
+    "query_order": {
+      "required_slots": ["order_id"],
+      "mutating": false
+    },
+    "query_delivery_status": {
+      "required_slots": ["order_id"],
+      "mutating": false
+    },
+    "query_insurance_status": {
+      "required_slots": ["order_id"],
+      "mutating": false
+    },
+    "rush_order": {
+      "required_slots": ["order_id"],
+      "mutating": false
+    },
+    "cancel_order": {
+      "required_slots": ["order_id"],
+      "mutating": true,
+      "requires_confirmation": true
+    },
+    "submit_refund": {
+      "required_slots": ["order_id"],
+      "mutating": true,
+      "requires_confirmation": true
+    },
+    "modify_order": {
+      "required_slots": ["order_id"],
+      "mutating": true,
+      "requires_confirmation": true
+    },
+    "submit_complaint": {
+      "required_slots": [],
+      "mutating": true,
+      "requires_confirmation": true
+    }
+  }
+}

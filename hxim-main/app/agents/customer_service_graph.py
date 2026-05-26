@@ -19,6 +19,7 @@ from langgraph.graph import END, START, StateGraph
 
 from app.data import MOCK_DB
 from app.domain.catalog import search_knowledge
+from app.domain.config_loader import get_sop_text
 from app.domain.heuristics import (
     decide_route,
     detect_emotion,
@@ -122,21 +123,21 @@ def generator_agent(state: CustomerServiceState) -> dict[str, Any]:
     """Generator Agent: produce a final customer-facing answer."""
     if state.get("route") == "ESCALATE":
         reason = state.get("escalate_reason") or "manual_review"
-        reply = "这个问题我会立即为你转接人工客服处理。"
+        reply = get_sop_text("escalation", "default_reply")
         if reason == "p0_food_safety":
-            reply += "请先保留餐品、包装和照片，人工客服会优先跟进食品安全问题。"
+            reply += get_sop_text("escalation", "p0_food_safety_suffix")
         return {"reply": reply, "trace": ["generator:escalate"]}
 
     if state.get("route") == "CHITCHAT":
         return {
-            "reply": "你好，我是浣熊食堂智能客服。你可以问我订单、配送、退款或菜品问题。",
+            "reply": get_sop_text("chitchat", "default_reply"),
             "trace": ["generator:chitchat"],
         }
 
     missing = _first_missing_slots(state.get("function_results", []))
     if missing:
         return {
-            "reply": "我可以继续处理，请先补充：" + "、".join(missing),
+            "reply": get_sop_text("generator", "missing_slots_prefix") + "、".join(missing),
             "trace": ["generator:ask_user"],
         }
 
@@ -147,7 +148,7 @@ def generator_agent(state: CustomerServiceState) -> dict[str, Any]:
     ]
     if confirmations:
         return {
-            "reply": "需要你确认后我再提交：" + "；".join(confirmations),
+            "reply": get_sop_text("generator", "confirmation_prefix") + "；".join(confirmations),
             "trace": ["generator:needs_confirmation"],
         }
 
@@ -157,10 +158,10 @@ def generator_agent(state: CustomerServiceState) -> dict[str, Any]:
             parts.append(str(result["message"]))
     if state.get("rag_results"):
         knowledge = state["rag_results"][0]
-        parts.append(f"参考规则：{knowledge['content']}")
+        parts.append(f"{get_sop_text('generator', 'knowledge_prefix')}{knowledge['content']}")
 
     if not parts:
-        parts.append("我已收到你的问题，会按食堂客服流程继续处理。")
+        parts.append(get_sop_text("generator", "fallback_reply"))
 
     return {
         "reply": " ".join(parts),

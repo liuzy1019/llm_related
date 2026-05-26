@@ -21,7 +21,7 @@ llm_related-main/
 | Project | Category | Description | Status |
 | --- | --- | --- | --- |
 | [langgraph-scaffold](langgraph-scaffold/) | Agent framework | LangGraph scaffold covering ReAct, Plan-and-Execute, Multi-Agent workflows, checkpointers, tool nodes, and tests. | Runnable |
-| [hxim-main](hxim-main/) | Agent application | Offline food-delivery customer-service agent with routing, mock order actions, multi-turn state, confirmation flow, FastAPI, and evaluation payload adapters. | Runnable |
+| [hxim-main](hxim-main/) | Agent application | Offline food-delivery customer-service agent with declarative routing config, mock order actions, multi-turn state, confirmation flow, FastAPI, and evaluation payload adapters. | Runnable |
 | [rl-main](rl-main/) | Research notes | Notebook collection for RL, RLHF, GRPO, reasoning, vLLM, SGLang, Ray, verl, and agent RL. | Notebook-based |
 | [llm_pretrain](llm_pretrain/) | Training reproduction | Notes and project skeleton for tokenizer training, Megatron-LM pretraining, HuggingFace conversion, and Verl SFT. | Skeleton |
 

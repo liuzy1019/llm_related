@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import Any
 
 from app.data import MOCK_DB
+from app.domain.config_loader import get_action_sequence
 
 
 def _missing_order_id(slots: dict[str, Any]) -> dict[str, Any] | None:
@@ -23,23 +24,21 @@ def _missing_order_id(slots: dict[str, Any]) -> dict[str, Any] | None:
 
 def execute_business_action(intent: str, slots: dict[str, Any]) -> list[dict[str, Any]]:
     """Execute one or more deterministic business actions for an intent."""
-    results: list[dict[str, Any]] = []
-    if intent in {"配送", "催单"}:
-        results.append(query_delivery_status(slots))
-        if intent == "催单":
-            results.append(rush_order(slots))
-        return results
-    if intent in {"退款", "少送错送", "食安", "餐损撒漏", "餐品不符合预期"}:
-        if slots.get("requested_action") == "cancel_order":
-            return [cancel_order(slots)]
-        results.append(query_order(slots))
-        if intent == "食安":
-            results.append(query_insurance_status(slots))
-        results.append(submit_refund(slots))
-        return results
-    if intent in {"修改订单", "备注"}:
-        return [modify_order(slots)]
-    return [query_order(slots)]
+    return [_execute_named_action(action, slots) for action in get_action_sequence(intent, slots)]
+
+
+def _execute_named_action(action: str, slots: dict[str, Any]) -> dict[str, Any]:
+    registry = {
+        "query_order": query_order,
+        "query_delivery_status": query_delivery_status,
+        "query_insurance_status": query_insurance_status,
+        "rush_order": rush_order,
+        "cancel_order": cancel_order,
+        "submit_refund": submit_refund,
+        "modify_order": modify_order,
+        "submit_complaint": submit_complaint,
+    }
+    return registry[action](slots)
 
 
 def query_order(slots: dict[str, Any]) -> dict[str, Any]:

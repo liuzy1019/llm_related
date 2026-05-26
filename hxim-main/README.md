@@ -7,6 +7,7 @@ The project uses LangGraph to model a hybrid coordinator workflow. It runs witho
 ## Features
 
 - LangGraph workflow with Router, Knowledge, Action, Hybrid, Generator, and Memory nodes.
+- Declarative JSON config for intent metadata, action sequences, and generator SOP text.
 - Rule-based intent detection, slot extraction, stage classification, emotion detection, and escalation decision.
 - Mock order, delivery, refund, cancellation, and user-profile data.
 - Multi-turn session state for missing slots and pending mutations.
@@ -37,6 +38,8 @@ Main modules:
 | Module | Responsibility |
 | --- | --- |
 | `app/agents/customer_service_graph.py` | LangGraph nodes and graph wiring |
+| `app/configs/` | Declarative intent, function, and SOP metadata |
+| `app/domain/config_loader.py` | JSON config loading and validation |
 | `app/domain/heuristics.py` | Rule-based normalization, intent detection, slot extraction, and routing helpers |
 | `app/domain/catalog.py` | In-memory knowledge snippets used by the Knowledge node |
 | `app/tools/business_tools.py` | Mock business actions for orders, delivery, refunds, cancellation, and modification |
@@ -160,6 +163,7 @@ Response fields for `POST /chat`:
 Current coverage includes:
 
 - Domain normalization, intent detection, and slot extraction.
+- Declarative config loading and action-sequence validation.
 - Single-turn LangGraph execution.
 - Missing-slot continuation across turns.
 - Session isolation and reset behavior.
@@ -187,6 +191,7 @@ Environment variables are optional in mock mode.
 hxim-main/
 ├── app/
 │   ├── agents/
+│   ├── configs/
 │   ├── data/
 │   ├── domain/
 │   ├── state/

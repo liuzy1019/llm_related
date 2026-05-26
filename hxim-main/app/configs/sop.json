@@ -1,0 +1,15 @@
+{
+  "generator": {
+    "missing_slots_prefix": "我可以继续处理，请先补充：",
+    "confirmation_prefix": "需要你确认后我再提交：",
+    "fallback_reply": "我已收到你的问题，会按食堂客服流程继续处理。",
+    "knowledge_prefix": "参考规则："
+  },
+  "escalation": {
+    "default_reply": "这个问题我会立即为你转接人工客服处理。",
+    "p0_food_safety_suffix": "请先保留餐品、包装和照片，人工客服会优先跟进食品安全问题。"
+  },
+  "chitchat": {
+    "default_reply": "你好，我是浣熊食堂智能客服。你可以问我订单、配送、退款或菜品问题。"
+  }
+}

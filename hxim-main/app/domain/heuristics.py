@@ -10,6 +10,13 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from app.domain.config_loader import (
+    get_default_confidence,
+    get_default_intent,
+    get_intent_rule,
+    iter_intent_rules,
+)
+
 TYPO_MAP = {
     "吃出所料": "吃出塑料",
     "吃坏肚子": "吃坏了肚子",
@@ -49,39 +56,16 @@ def extract_slots(text: str) -> dict[str, Any]:
 
 
 def detect_intent(text: str) -> tuple[str, float]:
-    keyword_rules: tuple[tuple[str, tuple[str, ...], float], ...] = (
-        ("转人工", ("人工", "真人", "客服"), 0.96),
-        ("食安", ("塑料", "异物", "吃坏", "肚子疼", "过期", "变质", "虫子"), 0.94),
-        ("少送错送", ("漏发", "少送", "没给", "送错", "错发", "少了一份"), 0.9),
-        ("餐损撒漏", ("洒了", "撒了", "漏了", "外溢", "包装破", "包装坏", "汤洒"), 0.89),
-        ("餐品不符合预期", ("太咸", "太淡", "凉了", "不热", "难吃", "分量少", "不好吃"), 0.88),
-        ("退款", ("退款", "退钱", "售后", "取消订单", "不要了", "取消"), 0.9),
-        ("催单", ("催单", "催一下", "快点", "还没送到", "怎么还没", "什么时候到", "多久到", "到哪"), 0.87),
-        ("配送", ("放门口", "放柜子", "别放", "不要放", "送到", "骑手", "配送", "注意安全"), 0.86),
-        ("修改订单", ("改地址", "修改订单", "换商品", "更换商品", "改电话"), 0.84),
-        ("备注", ("不要辣", "加辣", "少辣", "不辣", "不要香菜", "多放", "少放", "备注"), 0.84),
-        ("发票", ("发票", "抬头", "税号"), 0.83),
-        ("团餐", ("团餐", "公司订餐", "大额订单", "50份", "二十份", "20份", "十份", "10份"), 0.83),
-        ("赠品", ("送个", "赠品", "免费送", "能送"), 0.82),
-        ("优惠", ("多少钱", "价格", "优惠", "折扣", "满减", "券", "会员"), 0.82),
-        ("商品", ("有什么菜", "推荐", "口味", "辣不辣", "菜单", "原料", "售罄", "补货"), 0.82),
-        ("门店", ("几点", "营业", "开门", "地址", "在哪", "电话", "预定", "浣熊食堂"), 0.8),
-        ("闲聊", ("你好", "您好", "hello", "谢谢", "辛苦了"), 0.75),
-    )
-    for intent, keywords, confidence in keyword_rules:
-        if any(keyword in text for keyword in keywords):
-            return intent, confidence
-    return "澄清", 0.62
+    for rule in iter_intent_rules():
+        keywords = tuple(rule.get("keywords", ()))
+        if keywords and any(keyword in text for keyword in keywords):
+            return str(rule["name"]), float(rule["confidence"])
+    return get_default_intent(), get_default_confidence()
 
 
 def detect_stage(intent: str) -> str:
-    if intent in {"商品", "优惠", "门店", "团餐", "赠品", "发票", "澄清"}:
-        return "presale"
-    if intent in {"配送", "催单", "修改订单", "备注"}:
-        return "sale"
-    if intent in {"退款", "少送错送", "食安", "餐损撒漏", "餐品不符合预期"}:
-        return "after_sale"
-    return "general"
+    rule = get_intent_rule(intent)
+    return str(rule.get("stage", "general")) if rule else "general"
 
 
 def detect_emotion(text: str) -> str:
@@ -107,12 +91,9 @@ def should_escalate(text: str, intent: str, emotion: str, confidence: float) -> 
 def decide_route(intent: str, slots: dict[str, Any], escalate: bool) -> str:
     if escalate:
         return "ESCALATE"
-    if intent == "闲聊":
-        return "CHITCHAT"
-    if intent in {"商品", "优惠", "门店", "团餐", "赠品", "发票", "澄清"}:
-        return "KNOWLEDGE"
-    if intent in {"配送", "催单"} and slots.get("order_id"):
-        return "ACTION"
-    if intent in {"退款", "少送错送", "食安", "餐损撒漏", "餐品不符合预期", "修改订单", "备注"}:
+    rule = get_intent_rule(intent)
+    if not rule:
         return "HYBRID"
-    return "HYBRID"
+    if rule.get("requires_order_id_for_route") and not slots.get("order_id"):
+        return str(rule.get("missing_order_route", "HYBRID"))
+    return str(rule.get("route", "HYBRID"))
