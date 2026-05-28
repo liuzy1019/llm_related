@@ -222,6 +222,7 @@ hxim-main/
 
 ## Related Docs
 
+- [Repository Changelog](../CHANGELOG.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Progress Log](docs/PROGRESS_LOG.md)

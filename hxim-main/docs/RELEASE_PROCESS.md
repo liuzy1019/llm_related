@@ -41,6 +41,7 @@ cd hxim-main
 
 每次发布必须同步更新：
 
+- 根目录 `CHANGELOG.md`：记录版本号、日期、Added/Changed/Fixed/Verified 等变更摘要。
 - `docs/PROGRESS_LOG.md`：记录版本、完成内容、测试结果、覆盖度和下一步。
 - `docs/ROADMAP.md`：如果路线、优先级或验收标准发生变化，需要更新。
 - `README.md`：如果启动命令、API、demo query 或使用方式发生变化，需要更新。
@@ -71,7 +72,7 @@ git commit -m "Document hx customer service release process"
 正式版本发布时打 annotated tag：
 
 ```bash
-git tag -a v1.1 -m "hx customer service agent v1.1"
+git tag -a v1.1 -m "hxim-main v1.1"
 ```
 
 推送分支和 tag：

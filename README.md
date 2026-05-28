@@ -77,6 +77,7 @@ jupyter lab
 
 ## Documentation
 
+- [Changelog](CHANGELOG.md)
 - [langgraph-scaffold README](langgraph-scaffold/README.md)
 - [hxim-main README](hxim-main/README.md)
 - [hxim-main architecture](hxim-main/docs/ARCHITECTURE.md)
